@@ -41,7 +41,7 @@ main{max-width:960px;margin:0 auto;padding:0 16px 40px}
 .note{color:var(--muted);font-size:.85rem;margin-top:28px;max-width:60ch}
 .empty{padding:20px 0;color:var(--muted)}
 .panel{position:fixed;z-index:25;right:12px;left:12px;top:calc(env(safe-area-inset-top,0px) + 64px);max-width:380px;margin-left:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px;max-height:70vh;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,.25)}
-.panel[hidden],.gate[hidden],#admin[hidden]{display:none}
+.panel[hidden],.gate[hidden],#admin[hidden],.badge[hidden],.cta[hidden]{display:none}
 .ph{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
 .link{background:none;border:0;color:var(--accent);padding:0;text-decoration:underline}
 .n{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;gap:10px}
@@ -88,6 +88,8 @@ dialog::backdrop{background:rgba(10,8,30,.75)}
   <section id="admin" hidden>
     <h2 style="font-size:1.4rem;margin-top:32px">Ajouter une nouveauté</h2>
     <p class="note" style="margin-top:4px">Réservé à l’administrateur. N’ajoute que des contenus libres de droits ou dont tu as l’autorisation, y compris pour l’affiche.</p>
+    <button class="go" id="seed" type="button" style="margin-bottom:8px">Importer les 7 films Blender (images incluses)</button>
+    <p class="err" id="serr" role="alert"></p>
     <form id="aform" novalidate>
       <label for="at">Titre</label><input id="at">
       <label for="ak">Catégorie</label><select id="ak"><option>Films</option><option>Animés</option><option>Mangas</option></select>
@@ -185,6 +187,21 @@ if(!t||!/^\d{4}$/.test(y)||!/^https:\/\//.test(u)){er.textContent="Remplis le ti
 if(p&&!/^(https:\/\/|posters\/)/.test(p)){er.textContent="L’affiche doit commencer par https:// ou posters/";return}
 try{await addDoc(collection(db,"catalogue"),{title:t,k:$("#ak").value,y:Number(y),d:$("#ad").value.trim(),p,u,h:Math.floor(Math.random()*360),createdAt:serverTimestamp()});e.target.reset();er.textContent=""}catch(x){er.textContent="Publication refusée. Vérifie que ton compte est administrateur."}};
 
+
+const SEED=[
+["Spring","Films",2019,"L’histoire d’une jeune bergère et de son chien, qui affrontent des esprits anciens pour que le cycle de la vie continue.","https://studio.blender.org/files/public/thumbnail/ea/65/ea65feaacf95911f39844e2ea97e68b5_m.webp","https://studio.blender.org/projects/spring/"],
+["Charge","Films",2022,"Dans un monde où l’énergie manque, un vieil homme démuni s’introduit dans une usine de batteries et affronte un robot de sécurité mortel.","https://studio.blender.org/files/public/thumbnail/ae/13/ae134adfbfa91160947451873ab09c6d_m.webp","https://studio.blender.org/projects/charge/"],
+["Cosmos Laundromat","Films",2015,"Premier épisode de Cosmos Laundromat, la plus grosse production du Blender Institute, pensée comme le début d’un long métrage.","https://studio.blender.org/files/public/thumbnail/75/54/7554352c0ec78a8540a8e5f3b3671927_m.webp","https://studio.blender.org/projects/cosmos-laundromat/"],
+["Sintel","Films",2010,"L’amitié entre une jeune fille et un bébé dragon, et ce qu’elle est prête à faire quand cette amitié lui est enlevée.","https://studio.blender.org/files/public/thumbnail/03/f7/03f7b0d15c55b428680d4c6bb313f742_m.webp","https://studio.blender.org/projects/sintel/"],
+["Big Buck Bunny","Films",2008,"Fatigué d’être harcelé par l’écureuil Frankie et sa bande, le lapin JC décide enfin de se défendre.","https://studio.blender.org/files/public/thumbnail/92/96/9296b1255fff3ef0e25da43f70616349_m.webp","https://studio.blender.org/projects/big-buck-bunny/"],
+["Tears of Steel","Films",2012,"Un court métrage mêlant prises de vues réelles et images de synthèse : deux personnes recréées du passé tentent d’arrêter l’apocalypse des robots.","https://studio.blender.org/files/public/thumbnail/3c/83/3c833d978e7de4b58eaa1a12be541664_m.webp","https://studio.blender.org/projects/tears-of-steel/"],
+["Elephants Dream","Films",2006,"Emo et Proog vivent dans un monde surréaliste d’oiseaux mécaniques et de machines vivantes. C’est le tout premier film ouvert de Blender.","https://studio.blender.org/files/public/thumbnail/04/77/0477dfea1d88a94ba1a75f99f433b8f6_m.webp","https://studio.blender.org/projects/elephants-dream/"]
+];
+$("#seed").onclick=async()=>{const b=$("#seed"),er=$("#serr");b.disabled=true;er.textContent="Import en cours…";let n=0;
+try{for(let i=SEED.length-1;i>=0;i--){const [title,k,y,d,p,u]=SEED[i];if(items.some(x=>x.title===title))continue;
+await addDoc(collection(db,"catalogue"),{title,k,y,d,p,u,h:Math.floor(Math.random()*360),createdAt:serverTimestamp()});n++}
+er.textContent=n?n+" film(s) ajouté(s). Crédit : Blender Foundation / Blender Studio.":"Tous les films sont déjà dans le catalogue."}
+catch(x){er.textContent="Import refusé. Vérifie que ton compte est administrateur."}b.disabled=false};
 onAuthStateChanged(auth,async u=>{if(unsub){unsub();unsub=null}
 if(!u){uid=null;items=[];$("#gate").hidden=false;$("#admin").hidden=true;render();notifs();return}
 uid=u.uid;first=true;try{read=JSON.parse(store.get("hv_read_"+uid)||"[]")}catch(e){read=[]}
