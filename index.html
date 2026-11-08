@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Horizon VIBES</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#14122b">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f4fc;--surface:#fff;--text:#1a1740;--muted:#5d5a85;--accent:#d92f6b;--accent-ink:#fff;--line:#ddd8f0;--sun:#ffb25b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -59,18 +62,43 @@ dialog::backdrop{background:rgba(10,8,30,.75)}
 .act{display:block;text-align:center;text-decoration:none;background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:12px;font-weight:700;margin-top:14px}
 .cl{position:absolute;top:10px;right:10px;z-index:3;border:0;border-radius:50%;width:36px;height:36px;background:rgba(20,18,43,.7);color:#fff}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+[hidden]{display:none!important}
+body{padding-bottom:84px}
+.vt{font-size:1.6rem;font-weight:800;margin:20px 0 12px}
+.vh{display:flex;justify-content:space-between;align-items:center}
+.vh h2{margin:24px 0 10px;font-size:1.25rem}
+.gl{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px}
+.gl .pc{width:auto}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;background:var(--surface);border-top:1px solid var(--line);padding:6px 4px calc(env(safe-area-inset-bottom,0px) + 6px)}
+nav button{flex:1;background:none;border:0;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.75rem;padding:6px 0}
+nav button[aria-current="page"]{color:var(--accent);font-weight:500}
+nav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ic{position:relative;display:inline-flex}
+.ic .badge{top:-6px;right:-10px}
+.prof{display:flex;gap:14px;align-items:center;margin-top:20px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+.av{width:60px;height:60px;border-radius:50%;background:linear-gradient(160deg,var(--accent),var(--sun));color:#14122b;display:grid;place-items:center;font:800 1.6rem "Bricolage Grotesque",sans-serif;flex:none}
+.pn{font:800 1.2rem "Bricolage Grotesque",sans-serif}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.stats button{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;color:var(--text);display:flex;flex-direction:column;align-items:center}
+.stats b{font:800 1.5rem "Bricolage Grotesque",sans-serif;color:var(--accent)}
+.acc{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-top:12px;overflow:hidden}
+.acc summary{padding:14px 16px;font-weight:500;cursor:pointer}
+.ab{padding:0 16px 16px}
+.go.alt{background:var(--surface);color:var(--text);border:1px solid var(--line)}
+.out{width:100%;margin-top:20px;border:1px solid var(--accent);background:none;color:var(--accent);border-radius:10px;padding:12px;font-weight:700}
+.card2{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.sw{display:flex;gap:10px;align-items:center;font-weight:400;margin:14px 0 0}
+input[type=checkbox]{width:auto;accent-color:var(--accent)}
+.fb{padding:10px 0;border-bottom:1px solid var(--line);font-size:.9rem}
 </style>
 </head>
 <body>
 <header>
   <div class="brand">Horizon <span>VIBES</span></div>
-  <button class="bell" id="bell" aria-expanded="false" aria-controls="panel">Notifications<span class="badge" id="badge" hidden>0</span></button>
 </header>
-<section class="panel" id="panel" hidden aria-label="Notifications">
-  <div class="ph"><strong>Nouveautés</strong><button class="link" id="readall">Tout marquer comme lu</button></div>
-  <div id="nlist"></div>
-</section>
 
+<div id="v-home">
 <section class="hero" id="hero">
   <div class="hbg" id="hbg"></div>
   <div class="htx">
@@ -85,6 +113,50 @@ dialog::backdrop{background:rgba(10,8,30,.75)}
   <p id="hello" style="color:var(--muted);margin:16px 0 0"></p>
   <input id="q" type="search" placeholder="Chercher un film, un animé, un manga" aria-label="Rechercher">
   <div id="rows"></div>
+  
+  
+</main>
+</div>
+
+<div id="v-list" hidden><main><h2 class="vt">Ma liste</h2><div class="gl" id="mylist"></div></main></div>
+
+<div id="v-msg" hidden><main>
+  <div class="vh"><h2 class="vt">Messages</h2><button class="link" id="readall">Tout marquer comme lu</button></div>
+  <div class="card2" id="nlist"></div>
+</main></div>
+
+<div id="v-me" hidden><main>
+  <section class="prof"><div class="av" id="mav"></div><div><div class="pn" id="mname"></div><div class="meta" id="mmail"></div><div class="meta" id="mid"></div></div></section>
+  <div class="stats"><button id="s1"><b id="c1">0</b><span>Dans ma liste</span></button><button id="s2"><b id="c2">0</b><span>Messages non lus</span></button></div>
+  <section class="sec"><div class="vh"><h2>Historique de consultation</h2><button class="link" id="clearh">Effacer</button></div><div class="row" id="hrow"></div></section>
+
+  <details class="acc"><summary>Paramètres</summary><div class="ab">
+    <label for="sth">Thème</label>
+    <select id="sth"><option value="auto">Automatique</option><option value="light">Clair</option><option value="dark">Sombre</option></select>
+    <label class="sw"><input type="checkbox" id="salert"> Alertes de nouveautés dans l’application</label>
+    <label class="sw"><input type="checkbox" id="spush"> Notifications push sur cet appareil</label>
+    <p class="err" id="spe" role="alert"></p>
+    <label for="spn">Prénom</label><input id="spn" autocomplete="given-name">
+    <label for="snm">Nom</label><input id="snm" autocomplete="family-name">
+    <button class="go" id="ssave" type="button">Enregistrer mon nom</button>
+    <button class="go alt" id="spw" type="button">Changer mon mot de passe (par e-mail)</button>
+    <button class="go alt" id="sdel" type="button">Supprimer mon compte</button>
+    <p class="err" id="sme" role="alert"></p>
+  </div></details>
+
+  <details class="acc"><summary>Aide et signalement</summary><div class="ab">
+    <label for="ft">Type de message</label>
+    <select id="ft"><option>Avis</option><option>Problème technique</option><option>Signaler un contenu</option><option>Demande de retrait (droits d’auteur)</option></select>
+    <label for="fm">Ton message</label><textarea id="fm" rows="4" maxlength="1000"></textarea>
+    <p class="err" id="fe" role="alert"></p>
+    <button class="go" id="fsend" type="button">Envoyer</button>
+  </div></details>
+
+  <details class="acc"><summary>À propos et crédits</summary><div class="ab">
+    <p>Horizon VIBES propose des films libres de droits et des liens vers les plateformes officielles. Version 1.1.</p>
+    <p class="meta">Films Blender : © Blender Foundation / Blender Studio, licence Creative Commons. Titulaire de droits ? Utilise « Demande de retrait » dans Aide et signalement.</p>
+  </div></details>
+
   <section id="admin" hidden>
     <h2 style="font-size:1.4rem;margin-top:32px">Ajouter une nouveauté</h2>
     <p class="note" style="margin-top:4px">Réservé à l’administrateur. N’ajoute que des contenus libres de droits ou dont tu as l’autorisation, y compris pour l’affiche.</p>
@@ -100,11 +172,21 @@ dialog::backdrop{background:rgba(10,8,30,.75)}
       <p class="err" id="aerr" role="alert"></p>
       <button class="go" type="submit">Publier et notifier</button>
     </form>
+    <h2 style="font-size:1.2rem;margin-top:24px">Messages reçus</h2><div id="fblist"></div>
   </section>
-  <p class="note"><button class="link" id="logout">Se déconnecter</button></p>
-</main>
 
-<dialog id="dlg"><button class="cl" id="dcl" aria-label="Fermer">✕</button><div id="dp"></div><div class="dx"><h2 id="dt"></h2><div class="meta" id="dm"></div><p id="dd"></p><a class="act" id="da" target="_blank" rel="noopener noreferrer"></a></div></dialog>
+  <button class="out" id="logout">Se déconnecter</button>
+</main></div>
+
+<nav aria-label="Navigation principale">
+  <button data-v="home" aria-current="page"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Accueil</button>
+  <button data-v="list"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span>Ma liste</button>
+  <button data-v="msg"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0"/></svg><span class="badge" id="nb" hidden>0</span></span>Messages</button>
+  <button data-v="me"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>Moi</button>
+</nav>
+
+
+<dialog id="dlg"><button class="cl" id="dcl" aria-label="Fermer">✕</button><div id="dp"></div><div class="dx"><h2 id="dt"></h2><div class="meta" id="dm"></div><p id="dd"></p><button class="act" id="dfav" type="button" style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><a class="act" id="da" target="_blank" rel="noopener noreferrer"></a></div></dialog>
 
 <section class="gate" id="gate" hidden>
   <div class="box">
@@ -127,8 +209,8 @@ dialog::backdrop{background:rgba(10,8,30,.75)}
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,collection,doc,setDoc,getDoc,addDoc,onSnapshot,query,orderBy,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,sendPasswordResetEmail,deleteUser} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,collection,doc,setDoc,getDoc,addDoc,deleteDoc,onSnapshot,query,orderBy,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {getMessaging,getToken,isSupported} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 
 // 1) Colle ici la configuration Firebase (voir README.md). Même valeurs dans firebase-messaging-sw.js
@@ -138,7 +220,7 @@ const VAPID_KEY="";
 
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const $=s=>document.querySelector(s);
-let mode="signup",items=[],read=[],uid=null,first=true,unsub=null;
+let mode="signup",items=[],read=[],uid=null,first=true,unsub=null,unsubF=null,favs=[],hist=[],unread=0,cur=null,isAdmin=false,prefs={theme:"auto",alerts:true,push:false},me={prenom:"",nom:"",email:""};
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const ERR={"auth/email-already-in-use":"Cette adresse a déjà un compte. Connecte-toi.","auth/invalid-credential":"E-mail ou mot de passe incorrect.","auth/weak-password":"Le mot de passe doit avoir au moins 6 caractères.","auth/network-request-failed":"Pas de connexion. Vérifie ton réseau et réessaie."};
 const ms=i=>(i.createdAt&&i.createdAt.toMillis?i.createdAt.toMillis():Date.now());
@@ -151,7 +233,7 @@ function poster(i,ratio){const d=document.createElement("div");d.className="pst"
 const t=document.createElement("span");t.textContent=i.title;d.append(t);
 if(i.p){const im=document.createElement("img");im.src=i.p;im.alt="Affiche de "+i.title;im.loading="lazy";im.onerror=()=>im.remove();d.append(im)}
 if(isNew(i)){const n=document.createElement("span");n.className="new";n.textContent="Nouveau";d.append(n)}return d}
-function open(i){const dp=$("#dp");dp.textContent="";dp.append(poster(i,"16/11"));$("#dt").textContent=i.title;$("#dm").textContent=i.k+" – "+i.y;$("#dd").textContent=i.d||"";const a=$("#da");a.href=i.u;a.textContent=verb(i.k);$("#dlg").showModal()}
+function open(i){const dp=$("#dp");dp.textContent="";dp.append(poster(i,"16/11"));$("#dt").textContent=i.title;$("#dm").textContent=i.k+" – "+i.y;$("#dd").textContent=i.d||"";const a=$("#da");a.href=i.u;a.textContent=verb(i.k);cur=i;favBtn();addHist(i.id);$("#dlg").showModal()}
 $("#dcl").onclick=()=>$("#dlg").close();
 $("#dlg").onclick=e=>{if(e.target.id==="dlg")e.target.close()};
 
@@ -166,12 +248,12 @@ $("#q").oninput=render;
 
 function notifs(){const L=$("#nlist");L.textContent="";const N=items.filter(isNew);let u=0;if(!N.length)L.innerHTML='<div class="empty" style="padding:14px">Aucune nouveauté pour le moment.</div>';
 N.forEach(i=>{const r=read.includes(i.id);if(!r)u++;const d=document.createElement("div");d.className="n "+(r?"read":"unread");const dot=document.createElement("span");dot.className="dot";const tx=document.createElement("div");tx.textContent="Nouveau : "+i.title+" est disponible. ("+fmt(ms(i))+")";d.append(dot,tx);L.append(d)});
-const b=$("#badge");b.textContent=u;b.hidden=!u}
+const b=$("#nb");b.textContent=u;b.hidden=!u;unread=u;renderMe()}
 async function enablePush(){try{if(!VAPID_KEY||!("Notification" in window)||!(await isSupported()))return;if(Notification.permission==="default")await Notification.requestPermission();if(Notification.permission!=="granted")return;
 const reg=await navigator.serviceWorker.register("firebase-messaging-sw.js");const t=await getToken(getMessaging(app),{vapidKey:VAPID_KEY,serviceWorkerRegistration:reg});if(t)await setDoc(doc(db,"tokens",t),{uid,createdAt:serverTimestamp()})}catch(e){}}
-$("#bell").onclick=()=>{const p=$("#panel");p.hidden=!p.hidden;$("#bell").setAttribute("aria-expanded",!p.hidden);if(!p.hidden)enablePush()};
+
 $("#readall").onclick=()=>{read=items.map(i=>i.id);store.set("hv_read_"+uid,JSON.stringify(read));notifs()};
-function ping(t){if("Notification" in window&&Notification.permission==="granted"&&document.visibilityState==="visible")new Notification("Horizon VIBES",{body:"Nouveau : "+t})}
+function ping(t){if(prefs.alerts&&"Notification" in window&&Notification.permission==="granted"&&document.visibilityState==="visible")new Notification("Horizon VIBES",{body:"Nouveau : "+t})}
 
 function setMode(m){mode=m;const l=m==="login";$("#nameRow").hidden=l;$("#gtitle").textContent=l?"Content de te revoir.":"Crée ton compte pour entrer.";$("#go").textContent=l?"Me connecter":"Créer mon compte";$("#switch").textContent=l?"Pas encore de compte ? Inscris-toi":"Déjà un compte ? Connecte-toi";$("#err").textContent=""}
 $("#switch").onclick=()=>setMode(mode==="login"?"signup":"login");
@@ -179,7 +261,7 @@ $("#form").onsubmit=async e=>{e.preventDefault();const prenom=$("#prenom").value
 if(mode==="signup"&&(!prenom||!nom)){er.textContent="Entre ton prénom et ton nom.";return}
 if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){er.textContent="Cette adresse e-mail n’est pas valide. Exemple : nom@mail.com";return}
 if(pw.length<6){er.textContent="Le mot de passe doit avoir au moins 6 caractères.";return}
-try{if(mode==="signup"){const c=await createUserWithEmailAndPassword(auth,email,pw);await setDoc(doc(db,"users",c.user.uid),{prenom,nom,email,createdAt:serverTimestamp()})}else await signInWithEmailAndPassword(auth,email,pw)}catch(x){er.textContent=ERR[x.code]||"Une erreur est survenue. Réessaie."}};
+try{if(mode==="signup"){const c=await createUserWithEmailAndPassword(auth,email,pw);await setDoc(doc(db,"users",c.user.uid),{prenom,nom,email,createdAt:serverTimestamp()});me.prenom=prenom;me.nom=nom;$("#hello").textContent="Bienvenue, "+prenom+".";fillName();renderMe()}else await signInWithEmailAndPassword(auth,email,pw)}catch(x){er.textContent=ERR[x.code]||"Une erreur est survenue. Réessaie."}};
 $("#logout").onclick=()=>signOut(auth);
 
 $("#aform").onsubmit=async e=>{e.preventDefault();const t=$("#at").value.trim(),y=$("#ay").value.trim(),u=$("#au").value.trim(),p=$("#ap").value.trim(),er=$("#aerr");
@@ -202,14 +284,51 @@ try{for(let i=SEED.length-1;i>=0;i--){const [title,k,y,d,p,u]=SEED[i];if(items.s
 await addDoc(collection(db,"catalogue"),{title,k,y,d,p,u,h:Math.floor(Math.random()*360),createdAt:serverTimestamp()});n++}
 er.textContent=n?n+" film(s) ajouté(s). Crédit : Blender Foundation / Blender Studio.":"Tous les films sont déjà dans le catalogue."}
 catch(x){er.textContent="Import refusé. Vérifie que ton compte est administrateur."}b.disabled=false};
+
+const save=f=>uid?setDoc(doc(db,"users",uid),f,{merge:true}).catch(()=>{}):Promise.resolve();
+function favBtn(){$("#dfav").textContent=favs.includes(cur.id)?"✓ Dans ma liste (retirer)":"+ Ajouter à ma liste"}
+$("#dfav").onclick=()=>{favs=favs.includes(cur.id)?favs.filter(x=>x!==cur.id):[cur.id,...favs];save({favs});favBtn();renderMe()};
+function addHist(id){hist=[id,...hist.filter(x=>x!==id)].slice(0,20);save({hist});renderMe()}
+const VIEWS=["home","list","msg","me"];
+function show(v){VIEWS.forEach(x=>{$("#v-"+x).hidden=x!==v;const b=document.querySelector('nav [data-v="'+x+'"]');if(x===v)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});if(v==="list"||v==="me")renderMe();window.scrollTo(0,0)}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(b.dataset.v));
+$("#s1").onclick=()=>show("list");$("#s2").onclick=()=>show("msg");
+function card(i){const b=document.createElement("button");b.className="pc";const t=document.createElement("div");t.className="pt";t.textContent=i.title;const m=document.createElement("div");m.className="meta";m.textContent=i.k+" – "+i.y;b.append(poster(i),t,m);b.onclick=()=>open(i);return b}
+function renderMe(){const full=(me.prenom+" "+me.nom).trim()||"Utilisateur";$("#mav").textContent=full.charAt(0).toUpperCase();$("#mname").textContent=full;$("#mmail").textContent=me.email;$("#mid").textContent=uid?"ID : "+uid.slice(0,8):"";
+const byId=id=>items.find(x=>x.id===id),fl=favs.map(byId).filter(Boolean),hl=hist.map(byId).filter(Boolean);
+$("#c1").textContent=fl.length;$("#c2").textContent=unread;
+const g=$("#mylist");g.textContent="";fl.forEach(i=>g.append(card(i)));if(!fl.length)g.innerHTML='<p class="empty">Ta liste est vide. Ouvre un contenu et appuie sur « Ajouter à ma liste ».</p>';
+const r=$("#hrow");r.textContent="";hl.forEach(i=>r.append(card(i)));if(!hl.length)r.innerHTML='<p class="empty">Rien consulté pour le moment.</p>'}
+$("#clearh").onclick=()=>{hist=[];save({hist});renderMe()};
+
+function applyTheme(t){const r=document.documentElement;if(t==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",t)}
+function applyPrefs(){applyTheme(prefs.theme);$("#sth").value=prefs.theme;$("#salert").checked=!!prefs.alerts;$("#spush").checked=!!prefs.push;store.set("hv_prefs",JSON.stringify(prefs))}
+function fillName(){$("#spn").value=me.prenom;$("#snm").value=me.nom}
+const setPref=(k,v)=>{prefs={...prefs,[k]:v};applyPrefs();save({prefs})};
+try{prefs={...prefs,...JSON.parse(store.get("hv_prefs")||"{}")}}catch(e){}
+$("#sth").onchange=e=>setPref("theme",e.target.value);
+$("#salert").onchange=e=>setPref("alerts",e.target.checked);
+$("#spush").onchange=async e=>{const on=e.target.checked,m=$("#spe");m.textContent="";
+if(on&&!VAPID_KEY){e.target.checked=false;m.textContent="Les notifications push seront disponibles bientôt. Les alertes dans l’application fonctionnent déjà.";return}
+if(on){await enablePush();if(!("Notification" in window)||Notification.permission!=="granted"){e.target.checked=false;m.textContent="Autorise les notifications dans les réglages de ton navigateur.";return}}
+setPref("push",e.target.checked)};
+$("#ssave").onclick=async()=>{const p=$("#spn").value.trim(),n=$("#snm").value.trim(),m=$("#sme");if(!p||!n){m.textContent="Entre ton prénom et ton nom.";return}
+me.prenom=p;me.nom=n;await save({prenom:p,nom:n});$("#hello").textContent="Bienvenue, "+p+".";renderMe();m.textContent="Nom enregistré."};
+$("#spw").onclick=async()=>{const m=$("#sme");try{await sendPasswordResetEmail(auth,me.email);m.textContent="E-mail envoyé à "+me.email+". Vérifie aussi tes spams."}catch(e){m.textContent="Envoi impossible. Réessaie plus tard."}};
+$("#sdel").onclick=async()=>{const m=$("#sme");if(!confirm("Supprimer définitivement ton compte et tes données ?"))return;
+try{await deleteDoc(doc(db,"users",uid));await deleteUser(auth.currentUser)}catch(e){await save({prenom:me.prenom,nom:me.nom,email:me.email,favs,hist,prefs});m.textContent=e.code==="auth/requires-recent-login"?"Pour ta sécurité, déconnecte-toi, reconnecte-toi puis réessaie.":"Suppression impossible. Réessaie."}};
+$("#fsend").onclick=async()=>{const t=$("#fm").value.trim(),e=$("#fe");if(t.length<5){e.textContent="Écris au moins quelques mots.";return}
+try{await addDoc(collection(db,"feedback"),{uid,email:me.email,type:$("#ft").value,msg:t,createdAt:serverTimestamp()});$("#fm").value="";e.textContent="Merci, ton message a été envoyé."}catch(x){e.textContent="Envoi impossible. Réessaie."}};
+applyPrefs();
 onAuthStateChanged(auth,async u=>{if(unsub){unsub();unsub=null}
-if(!u){uid=null;items=[];$("#gate").hidden=false;$("#admin").hidden=true;render();notifs();return}
+if(!u){uid=null;items=[];favs=[];hist=[];me={prenom:"",nom:"",email:""};if(unsubF){unsubF();unsubF=null}$("#gate").hidden=false;$("#admin").hidden=true;show("home");render();notifs();return}
 uid=u.uid;first=true;try{read=JSON.parse(store.get("hv_read_"+uid)||"[]")}catch(e){read=[]}
 $("#gate").hidden=true;$("#pw").value="";
-try{const p=await getDoc(doc(db,"users",uid));if(p.exists())$("#hello").textContent="Bienvenue, "+p.data().prenom+"."}catch(e){}
-try{$("#admin").hidden=!(await getDoc(doc(db,"admins",uid))).exists()}catch(e){}
+me.email=u.email||"";try{const p=await getDoc(doc(db,"users",uid));if(p.exists()){const x=p.data();me.prenom=x.prenom||"";me.nom=x.nom||"";favs=x.favs||[];hist=x.hist||[];prefs={...prefs,...(x.prefs||{})};$("#hello").textContent="Bienvenue, "+me.prenom+"."}}catch(e){}applyPrefs();fillName();show("home");
+try{isAdmin=(await getDoc(doc(db,"admins",uid))).exists();$("#admin").hidden=!isAdmin;if(isAdmin)unsubF=onSnapshot(query(collection(db,"feedback"),orderBy("createdAt","desc")),s=>{const L=$("#fblist");L.textContent="";s.docs.slice(0,30).forEach(d=>{const x=d.data(),e=document.createElement("div");e.className="fb";e.textContent=x.type+" – "+(x.email||"")+" : "+x.msg;L.append(e)});if(!L.children.length)L.textContent="Aucun message."})}catch(e){}
 unsub=onSnapshot(query(collection(db,"catalogue"),orderBy("createdAt","desc")),s=>{items=s.docs.map(d=>({id:d.id,...d.data()}));
 if(!first)s.docChanges().forEach(c=>{if(c.type==="added"&&!c.doc.metadata.hasPendingWrites)ping(c.doc.data().title)});first=false;render();notifs()},()=>{$("#rows").innerHTML='<p class="empty">Impossible de charger le catalogue. Vérifie ta connexion.</p>'})});
+if("serviceWorker" in navigator)navigator.serviceWorker.register("firebase-messaging-sw.js").catch(()=>{});
 render();setMode("signup");
 </script>
 </body>
