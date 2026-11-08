@@ -160,7 +160,7 @@ input[type=checkbox]{width:auto;accent-color:var(--accent)}
   <section id="admin" hidden>
     <h2 style="font-size:1.4rem;margin-top:32px">Ajouter une nouveauté</h2>
     <p class="note" style="margin-top:4px">Réservé à l’administrateur. N’ajoute que des contenus libres de droits ou dont tu as l’autorisation, y compris pour l’affiche.</p>
-    <button class="go" id="seed" type="button" style="margin-bottom:8px">Importer les 7 films Blender (images incluses)</button>
+    <button class="go" id="seed" type="button" style="margin-bottom:8px">Importer le catalogue (14 contenus)</button>
     <p class="err" id="serr" role="alert"></p>
     <form id="aform" novalidate>
       <label for="at">Titre</label><input id="at">
@@ -271,6 +271,13 @@ try{await addDoc(collection(db,"catalogue"),{title:t,k:$("#ak").value,y:Number(y
 
 
 const SEED=[
+["MANGA Plus","Mangas",2026,"La plateforme officielle de l’éditeur Shueisha pour lire des mangas en ligne, avec des chapitres gratuits.","","https://mangaplus.shueisha.co.jp/"],
+["Crunchyroll","Animés",2026,"Le catalogue officiel d’animés en streaming légal, avec une partie des épisodes disponibles gratuitement.","","https://www.crunchyroll.com/"],
+["Nosferatu","Films",1922,"Chef-d’œuvre du cinéma muet allemand de F. W. Murnau : un agent immobilier se rend chez le mystérieux comte Orlok. Film du domaine public.","https://archive.org/services/img/nosferatu","https://archive.org/details/nosferatu"],
+["Le Voyage dans la Lune","Films",1902,"Le célèbre court métrage de Georges Méliès, considéré comme le premier film de science-fiction : des astronomes partent pour la Lune dans un obus. Domaine public.","https://archive.org/services/img/le_voyage_dans_la_lune","https://archive.org/details/le_voyage_dans_la_lune"],
+["Singularity","Films",2026,"Quand un événement cosmique engloutit la maison glacée d’une petite créature de l’espace, il doit trouver refuge parmi des créatures lumineuses veillées par un mystérieux être céleste.","https://studio.blender.org/files/public/thumbnail/b0/e4/b0e42f5463a4dba3adf6386d9dd0f048_m.webp","https://studio.blender.org/projects/singularity/"],
+["Wing It!","Films",2023,"Un ingénieur sérieux reçoit la visite d’un apprenti pilote enthousiaste, et les deux se retrouvent projetés dans les airs à bord d’une navette spatiale hors de contrôle.","https://studio.blender.org/files/public/thumbnail/c2/6d/c26d3b56aeb6bc9bf1ba6ee8e27b7ccd_m.webp","https://studio.blender.org/projects/wing-it/"],
+["Coffee Run","Films",2020,"Portée par la caféine, une jeune femme traverse les souvenirs doux-amers de sa relation passée.","https://studio.blender.org/files/public/thumbnail/7a/43/7a43fa6b0bc44e62f1cbb21473800e07_m.webp","https://studio.blender.org/projects/coffee-run/"],
 ["Spring","Films",2019,"L’histoire d’une jeune bergère et de son chien, qui affrontent des esprits anciens pour que le cycle de la vie continue.","https://studio.blender.org/files/public/thumbnail/ea/65/ea65feaacf95911f39844e2ea97e68b5_m.webp","https://studio.blender.org/projects/spring/"],
 ["Charge","Films",2022,"Dans un monde où l’énergie manque, un vieil homme démuni s’introduit dans une usine de batteries et affronte un robot de sécurité mortel.","https://studio.blender.org/files/public/thumbnail/ae/13/ae134adfbfa91160947451873ab09c6d_m.webp","https://studio.blender.org/projects/charge/"],
 ["Cosmos Laundromat","Films",2015,"Premier épisode de Cosmos Laundromat, la plus grosse production du Blender Institute, pensée comme le début d’un long métrage.","https://studio.blender.org/files/public/thumbnail/75/54/7554352c0ec78a8540a8e5f3b3671927_m.webp","https://studio.blender.org/projects/cosmos-laundromat/"],
@@ -282,7 +289,7 @@ const SEED=[
 $("#seed").onclick=async()=>{const b=$("#seed"),er=$("#serr");b.disabled=true;er.textContent="Import en cours…";let n=0;
 try{for(let i=SEED.length-1;i>=0;i--){const [title,k,y,d,p,u]=SEED[i];if(items.some(x=>x.title===title))continue;
 await addDoc(collection(db,"catalogue"),{title,k,y,d,p,u,h:Math.floor(Math.random()*360),createdAt:serverTimestamp()});n++}
-er.textContent=n?n+" film(s) ajouté(s). Crédit : Blender Foundation / Blender Studio.":"Tous les films sont déjà dans le catalogue."}
+er.textContent=n?n+" film(s) ajouté(s). Crédits : Blender Foundation / Blender Studio, Internet Archive.":"Tous les films sont déjà dans le catalogue."}
 catch(x){er.textContent="Import refusé. Vérifie que ton compte est administrateur."}b.disabled=false};
 
 const save=f=>uid?setDoc(doc(db,"users",uid),f,{merge:true}).catch(()=>{}):Promise.resolve();
