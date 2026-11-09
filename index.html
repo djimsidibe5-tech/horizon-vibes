@@ -130,6 +130,8 @@ input[type=checkbox]{width:auto;accent-color:var(--accent)}
   <div class="stats"><button id="s1"><b id="c1">0</b><span>Dans ma liste</span></button><button id="s2"><b id="c2">0</b><span>Messages non lus</span></button></div>
   <section class="sec"><div class="vh"><h2>Historique de consultation</h2><button class="link" id="clearh">Effacer</button></div><div class="row" id="hrow"></div></section>
 
+  <details class="acc"><summary>Mes téléchargements</summary><div class="ab"><div id="dllist"></div><p class="meta">Les vidéos téléchargées restent dans l’application, sur cet appareil, et n’apparaissent pas dans le gestionnaire de fichiers.</p></div></details>
+
   <details class="acc"><summary>Paramètres</summary><div class="ab">
     <label for="sth">Thème</label>
     <select id="sth"><option value="auto">Automatique</option><option value="light">Clair</option><option value="dark">Sombre</option></select>
@@ -164,9 +166,11 @@ input[type=checkbox]{width:auto;accent-color:var(--accent)}
     <p class="err" id="serr" role="alert"></p>
     <form id="aform" novalidate>
       <label for="at">Titre</label><input id="at">
-      <label for="ak">Catégorie</label><select id="ak"><option>Films</option><option>Animés</option><option>Mangas</option></select>
+      <label for="ak">Catégorie</label><select id="ak"><option>Films</option><option>Séries</option><option>Animés</option><option>Mangas</option></select>
       <label for="ay">Année</label><input id="ay" inputmode="numeric">
       <label for="ad">Résumé</label><textarea id="ad" rows="3"></textarea>
+      <label for="av">Lien vidéo du film (mp4, https)</label><input id="av" type="url" placeholder="https://">
+      <label for="ae">Épisodes (séries et animés) : une ligne par épisode</label><textarea id="ae" rows="4" placeholder="S1E1 | Titre | https://lien.mp4"></textarea>
       <label for="ap">Affiche (https://… ou posters/nom.jpg)</label><input id="ap">
       <label for="au">Lien officiel</label><input id="au" type="url" placeholder="https://">
       <p class="err" id="aerr" role="alert"></p>
@@ -186,7 +190,9 @@ input[type=checkbox]{width:auto;accent-color:var(--accent)}
 </nav>
 
 
-<dialog id="dlg"><button class="cl" id="dcl" aria-label="Fermer">✕</button><div id="dp"></div><div class="dx"><h2 id="dt"></h2><div class="meta" id="dm"></div><p id="dd"></p><button class="act" id="dfav" type="button" style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><a class="act" id="da" target="_blank" rel="noopener noreferrer"></a></div></dialog>
+<dialog id="pdlg"><button class="cl" id="pcl" aria-label="Fermer le lecteur">✕</button><video id="pv" controls playsinline style="width:100%;display:block;background:#000;max-height:60vh"></video><div class="dx"><h2 id="pt" style="font-size:1.1rem"></h2></div></dialog>
+
+<dialog id="dlg"><button class="cl" id="dcl" aria-label="Fermer">✕</button><div id="dp"></div><div class="dx"><h2 id="dt"></h2><div class="meta" id="dm"></div><p id="dd"></p><div id="eps"></div><button class="act" id="dwatch" type="button" hidden>▶ Regarder dans l’application</button><button class="act" id="ddl" type="button" hidden style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><button class="act" id="dfav" type="button" style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><a class="act" id="da" target="_blank" rel="noopener noreferrer"></a><button class="act" id="ddel" type="button" hidden style="width:100%;background:none;border:1px solid var(--accent);color:var(--accent)">Supprimer ce contenu</button></div></dialog>
 
 <section class="gate" id="gate" hidden>
   <div class="box">
@@ -233,14 +239,14 @@ function poster(i,ratio){const d=document.createElement("div");d.className="pst"
 const t=document.createElement("span");t.textContent=i.title;d.append(t);
 if(i.p){const im=document.createElement("img");im.src=i.p;im.alt="Affiche de "+i.title;im.loading="lazy";im.onerror=()=>im.remove();d.append(im)}
 if(isNew(i)){const n=document.createElement("span");n.className="new";n.textContent="Nouveau";d.append(n)}return d}
-function open(i){const dp=$("#dp");dp.textContent="";dp.append(poster(i,"16/11"));$("#dt").textContent=i.title;$("#dm").textContent=i.k+" – "+i.y;$("#dd").textContent=i.d||"";const a=$("#da");a.href=i.u;a.textContent=verb(i.k);cur=i;favBtn();addHist(i.id);$("#dlg").showModal()}
+function open(i){const dp=$("#dp");dp.textContent="";dp.append(poster(i,"16/11"));$("#dt").textContent=i.title;$("#dm").textContent=i.k+" – "+i.y;$("#dd").textContent=i.d||"";const a=$("#da");a.href=i.u;a.textContent=verb(i.k);cur=i;favBtn();addHist(i.id);media(i);$("#dlg").showModal()}
 $("#dcl").onclick=()=>$("#dlg").close();
 $("#dlg").onclick=e=>{if(e.target.id==="dlg")e.target.close()};
 
 function hero(){const i=items[0];if(!i){$("#hbg").style.background="";$("#ht").textContent="Des histoires à emporter.";$("#hd").textContent="Les premiers contenus arrivent bientôt.";$("#hb").hidden=true;return}
 $("#hbg").style.backgroundImage=(i.p?"url("+JSON.stringify(i.p)+"),":"")+grad(i.h||200);$("#hk").textContent=isNew(i)?"Nouveau":"À la une";$("#ht").textContent=i.title;$("#hd").textContent=i.d||(i.k+" – "+i.y);$("#hb").hidden=false;$("#hb").onclick=()=>open(i)}
 function render(){const q=$("#q").value.trim().toLowerCase(),R=$("#rows");R.textContent="";const L=items.filter(i=>!q||i.title.toLowerCase().includes(q));
-const S=q?[["Résultats",L]]:[["Nouveautés",L.filter(isNew)],["Films",L.filter(i=>i.k==="Films")],["Animés",L.filter(i=>i.k==="Animés")],["Mangas",L.filter(i=>i.k==="Mangas")]];
+const S=q?[["Résultats",L]]:[["Nouveautés",L.filter(isNew)],["Films",L.filter(i=>i.k==="Films")],["Séries",L.filter(i=>i.k==="Séries")],["Animés",L.filter(i=>i.k==="Animés")],["Mangas",L.filter(i=>i.k==="Mangas")]];
 S.forEach(([n,a])=>{if(!a.length)return;const s=document.createElement("section");s.className="sec";const h=document.createElement("h2");h.textContent=n;const r=document.createElement("div");r.className="row";
 a.forEach(i=>{const b=document.createElement("button");b.className="pc";const t=document.createElement("div");t.className="pt";t.textContent=i.title;const m=document.createElement("div");m.className="meta";m.textContent=i.k+" – "+i.y;b.append(poster(i),t,m);b.onclick=()=>open(i);r.append(b)});s.append(h,r);R.append(s)});
 if(!R.children.length)R.innerHTML='<p class="empty">Aucun résultat pour le moment.</p>';hero()}
@@ -266,8 +272,9 @@ $("#logout").onclick=()=>signOut(auth);
 
 $("#aform").onsubmit=async e=>{e.preventDefault();const t=$("#at").value.trim(),y=$("#ay").value.trim(),u=$("#au").value.trim(),p=$("#ap").value.trim(),er=$("#aerr");
 if(!t||!/^\d{4}$/.test(y)||!/^https:\/\//.test(u)){er.textContent="Remplis le titre, une année à 4 chiffres et un lien qui commence par https://";return}
-if(p&&!/^(https:\/\/|posters\/)/.test(p)){er.textContent="L’affiche doit commencer par https:// ou posters/";return}
-try{await addDoc(collection(db,"catalogue"),{title:t,k:$("#ak").value,y:Number(y),d:$("#ad").value.trim(),p,u,h:Math.floor(Math.random()*360),createdAt:serverTimestamp()});e.target.reset();er.textContent=""}catch(x){er.textContent="Publication refusée. Vérifie que ton compte est administrateur."}};
+if(p&&!/^(https:\/\/|[\w.\/-]+\.(jpe?g|png|webp)$)/i.test(p)){er.textContent="L’affiche doit être un lien https:// ou un nom de fichier (exemple : affiche.jpg)";return}
+if($("#av").value.trim()&&!/^https:\/\//.test($("#av").value.trim())){er.textContent="Le lien vidéo doit commencer par https://";return}
+try{await addDoc(collection(db,"catalogue"),{title:t,k:$("#ak").value,y:Number(y),d:$("#ad").value.trim(),p,u,v:$("#av").value.trim(),eps:parseEps($("#ae").value),h:Math.floor(Math.random()*360),createdAt:serverTimestamp()});e.target.reset();er.textContent=""}catch(x){er.textContent="Publication refusée. Vérifie que ton compte est administrateur."}};
 
 
 const SEED=[
@@ -305,7 +312,7 @@ function renderMe(){const full=(me.prenom+" "+me.nom).trim()||"Utilisateur";$("#
 const byId=id=>items.find(x=>x.id===id),fl=favs.map(byId).filter(Boolean),hl=hist.map(byId).filter(Boolean);
 $("#c1").textContent=fl.length;$("#c2").textContent=unread;
 const g=$("#mylist");g.textContent="";fl.forEach(i=>g.append(card(i)));if(!fl.length)g.innerHTML='<p class="empty">Ta liste est vide. Ouvre un contenu et appuie sur « Ajouter à ma liste ».</p>';
-const r=$("#hrow");r.textContent="";hl.forEach(i=>r.append(card(i)));if(!hl.length)r.innerHTML='<p class="empty">Rien consulté pour le moment.</p>'}
+const r=$("#hrow");r.textContent="";hl.forEach(i=>r.append(card(i)));if(!hl.length)r.innerHTML='<p class="empty">Rien consulté pour le moment.</p>';renderDl()}
 $("#clearh").onclick=()=>{hist=[];save({hist});renderMe()};
 
 function applyTheme(t){const r=document.documentElement;if(t==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",t)}
@@ -326,6 +333,46 @@ $("#sdel").onclick=async()=>{const m=$("#sme");if(!confirm("Supprimer définitiv
 try{await deleteDoc(doc(db,"users",uid));await deleteUser(auth.currentUser)}catch(e){await save({prenom:me.prenom,nom:me.nom,email:me.email,favs,hist,prefs});m.textContent=e.code==="auth/requires-recent-login"?"Pour ta sécurité, déconnecte-toi, reconnecte-toi puis réessaie.":"Suppression impossible. Réessaie."}};
 $("#fsend").onclick=async()=>{const t=$("#fm").value.trim(),e=$("#fe");if(t.length<5){e.textContent="Écris au moins quelques mots.";return}
 try{await addDoc(collection(db,"feedback"),{uid,email:me.email,type:$("#ft").value,msg:t,createdAt:serverTimestamp()});$("#fm").value="";e.textContent="Merci, ton message a été envoyé."}catch(x){e.textContent="Envoi impossible. Réessaie."}};
+
+function parseEps(t){return t.split("\n").map(l=>l.split("|").map(x=>x.trim())).filter(a=>a.length>=3&&/^https:\/\//.test(a[2])).map(a=>({n:a[0],t:a[1],v:a[2]}))}
+const dlKeys=()=>{try{return JSON.parse(store.get("hv_dl")||"[]")}catch(e){return[]}};
+const dlMeta=()=>{try{return JSON.parse(store.get("hv_dlm")||"{}")}catch(e){return{}}};
+const cpath=k=>"/dl/"+encodeURIComponent(k);
+async function play(key,url,title){let b=null;try{const r=await (await caches.open("hv-dl")).match(cpath(key));if(r)b=await r.blob()}catch(e){}
+const v=$("#pv");v.src=b?URL.createObjectURL(b):url;$("#pt").textContent=title+(b?" (hors ligne)":"");if($("#dlg").open)$("#dlg").close();$("#pdlg").showModal();v.play().catch(()=>{})}
+function stopPlayer(){const v=$("#pv");v.pause();v.removeAttribute("src");v.load()}
+$("#pcl").onclick=()=>$("#pdlg").close();
+$("#pdlg").addEventListener("close",stopPlayer);
+async function rmDl(key){try{await (await caches.open("hv-dl")).delete(cpath(key))}catch(e){}
+store.set("hv_dl",JSON.stringify(dlKeys().filter(x=>x!==key)));const m=dlMeta();delete m[key];store.set("hv_dlm",JSON.stringify(m))}
+function setDl(b,key,url,title,sh){const has=dlKeys().includes(key);b.disabled=false;
+b.textContent=has?(sh?"✓":"✓ Téléchargé – retirer de l’appareil"):(sh?"⬇":"⬇ Télécharger dans l’application");
+b.onclick=async()=>{if(dlKeys().includes(key)){await rmDl(key);setDl(b,key,url,title,sh);renderDl();return}
+b.disabled=true;b.textContent=sh?"0 %":"Téléchargement… 0 %";
+try{const r=await fetch(url,{mode:"cors"});if(!r.ok)throw 0;const total=+r.headers.get("content-length")||0,rd=r.body.getReader(),ch=[];let got=0;
+for(;;){const {done,value}=await rd.read();if(done)break;ch.push(value);got+=value.length;if(total){const p=Math.round(got*100/total);b.textContent=sh?p+" %":"Téléchargement… "+p+" %"}}
+const blob=new Blob(ch,{type:r.headers.get("content-type")||"video/mp4"});
+await (await caches.open("hv-dl")).put(cpath(key),new Response(blob));
+const k=dlKeys();k.push(key);store.set("hv_dl",JSON.stringify(k));const m=dlMeta();m[key]={t:title,u:url,s:blob.size};store.set("hv_dlm",JSON.stringify(m))}
+catch(e){alert("Téléchargement impossible : ce lien n’autorise pas l’enregistrement dans l’application, ou la connexion a échoué.")}
+setDl(b,key,url,title,sh);renderDl()}}
+function renderDl(){const L=$("#dllist");L.textContent="";const m=dlMeta(),ks=dlKeys();
+ks.forEach(k=>{const d=document.createElement("div");d.className="fb";d.style.cssText="display:flex;gap:10px;align-items:center";const t=document.createElement("span");t.style.flex="1";t.textContent=(m[k]?m[k].t:k)+(m[k]?" ("+Math.round(m[k].s/1048576)+" Mo)":"");
+const p=document.createElement("button");p.className="link";p.textContent="Lire";p.onclick=()=>play(k,m[k]&&m[k].u,m[k]?m[k].t:"");
+const x=document.createElement("button");x.className="link";x.textContent="Retirer";x.onclick=async()=>{await rmDl(k);renderDl()};d.append(t,p,x);L.append(d)});
+if(!ks.length)L.innerHTML='<p class="empty">Aucun téléchargement pour le moment.</p>'}
+function media(i){const w=$("#dwatch"),d=$("#ddl"),E=$("#eps"),eps=i.eps||[],has=!!i.v;E.textContent="";w.hidden=!has;d.hidden=!has;
+if(has){w.onclick=()=>play("v:"+i.id,i.v,i.title);setDl(d,"v:"+i.id,i.v,i.title,false)}
+let last="";eps.forEach((x,n)=>{const m=/^S(\d+)/i.exec(x.n||"");if(m&&m[1]!==last){last=m[1];const h=document.createElement("div");h.className="meta";h.style.marginTop="10px";h.textContent="Saison "+m[1];E.append(h)}
+const key="e:"+i.id+":"+n,r=document.createElement("div");r.className="fb";r.style.cssText="display:flex;gap:10px;align-items:center";
+const t=document.createElement("span");t.style.flex="1";t.textContent=x.n+(x.t?" – "+x.t:"");
+const p=document.createElement("button");p.className="link";p.textContent="▶";p.setAttribute("aria-label","Regarder "+x.n);p.onclick=()=>play(key,x.v,i.title+" – "+x.n);
+const b=document.createElement("button");b.className="link";b.setAttribute("aria-label","Télécharger "+x.n);setDl(b,key,x.v,i.title+" – "+x.n,true);
+r.append(t,p,b);E.append(r)});
+$("#da").textContent=(has||eps.length)?"Page officielle":verb(i.k);
+$("#ddel").hidden=!isAdmin}
+$("#ddel").onclick=async()=>{if(!cur||!confirm("Supprimer « "+cur.title+" » du catalogue ?"))return;
+try{await deleteDoc(doc(db,"catalogue",cur.id));$("#dlg").close()}catch(e){alert("Suppression refusée. Vérifie que ton compte est administrateur.")}};
 applyPrefs();
 onAuthStateChanged(auth,async u=>{if(unsub){unsub();unsub=null}
 if(!u){uid=null;items=[];favs=[];hist=[];me={prenom:"",nom:"",email:""};if(unsubF){unsubF();unsubF=null}$("#gate").hidden=false;$("#admin").hidden=true;show("home");render();notifs();return}
