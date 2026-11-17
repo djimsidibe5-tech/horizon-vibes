@@ -1,8 +1,1 @@
-{
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "functions": {
-    "main.py": {
-      "maxDuration": 30
-    }
-  }
-}
+{"name":"functions","private":true,"engines":{"node":"20"},"main":"index.js","dependencies":{"firebase-admin":"^12.0.0","firebase-functions":"^5.0.0"}}
