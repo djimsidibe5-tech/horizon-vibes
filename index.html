@@ -1,391 +1,1146 @@
-<!doctype html>
-<html lang="fr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Horizon VIBES</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#14122b">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#f6f4fc;--surface:#fff;--text:#1a1740;--muted:#5d5a85;--accent:#d92f6b;--accent-ink:#fff;--line:#ddd8f0;--sun:#ffb25b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14122b;--surface:#1f1c42;--text:#f3f1fa;--muted:#a9a5cc;--accent:#ff5d8f;--accent-ink:#14122b;--line:#34306a}}
-:root[data-theme="dark"]{--bg:#14122b;--surface:#1f1c42;--text:#f3f1fa;--muted:#a9a5cc;--accent:#ff5d8f;--accent-ink:#14122b;--line:#34306a}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*,*::before,*::after{box-sizing:inherit}
-body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.5 "DM Sans",system-ui,sans-serif}
-h1,h2,h3,.brand{font-family:"Bricolage Grotesque","DM Sans",system-ui,sans-serif;margin:0}
-button{font:inherit;cursor:pointer}
-:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--line)}
-.brand{font-weight:800;font-size:1.25rem}.brand span{color:var(--accent)}
-.bell{position:relative;background:var(--surface);border:1px solid var(--line);color:var(--text);border-radius:999px;padding:8px 14px}
-.badge{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;border-radius:10px;background:var(--accent);color:var(--accent-ink);font-size:.75rem;font-weight:700;display:grid;place-items:center;padding:0 5px}
-.hero{position:relative;min-height:68vh;display:flex;align-items:flex-end;overflow:hidden;color:#f3f1fa;background:#14122b}
-.hbg{position:absolute;inset:0;background-size:cover;background-position:center top}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,#14122b 6%,rgba(20,18,43,.6) 50%,rgba(20,18,43,.2))}
-.htx{position:relative;z-index:1;width:100%;max-width:960px;margin:0 auto;padding:24px 16px 28px}
-.htx h1{font-size:clamp(2.2rem,9vw,4rem);line-height:1;font-weight:800;max-width:16ch}
-.hk{display:inline-block;background:var(--sun);color:#1a1740;border-radius:6px;padding:2px 10px;font-weight:500;font-size:.85rem;margin-bottom:10px}
-.hd{max-width:48ch;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;color:#cfcbea}
-.cta{margin-top:14px;border:0;border-radius:10px;padding:12px 22px;background:var(--accent);color:var(--accent-ink);font-weight:700}
-main{max-width:960px;margin:0 auto;padding:0 16px 40px}
-#q{margin:16px 0 0}
-.sec h2{font-size:1.25rem;margin:24px 0 10px}
-.row{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:8px}
-.pc{flex:none;width:142px;scroll-snap-align:start;background:none;border:0;padding:0;text-align:left;color:inherit}
-.pst{position:relative;aspect-ratio:2/3;border-radius:12px;overflow:hidden;display:flex;align-items:flex-end;padding:10px;color:#fff;font:800 1rem/1.1 "Bricolage Grotesque",system-ui,sans-serif;transition:transform .15s}
-.pc:hover .pst{transform:translateY(-4px)}.pc:active .pst{transform:scale(.97)}
-.pst img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.new{position:absolute;top:8px;left:8px;z-index:2;background:var(--sun);color:#1a1740;font:500 .72rem "DM Sans",sans-serif;border-radius:6px;padding:1px 8px}
-.pt{margin-top:6px;font-weight:500;line-height:1.2}.meta{color:var(--muted);font-size:.85rem}
-.note{color:var(--muted);font-size:.85rem;margin-top:28px;max-width:60ch}
-.empty{padding:20px 0;color:var(--muted)}
-.panel{position:fixed;z-index:25;right:12px;left:12px;top:calc(env(safe-area-inset-top,0px) + 64px);max-width:380px;margin-left:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px;max-height:70vh;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,.25)}
-.panel[hidden],.gate[hidden],#admin[hidden],.badge[hidden],.cta[hidden]{display:none}
-.ph{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
-.link{background:none;border:0;color:var(--accent);padding:0;text-decoration:underline}
-.n{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;gap:10px}
-.n.unread{background:color-mix(in srgb,var(--accent) 10%,transparent)}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:8px;flex:none}.n.read .dot{background:transparent}
-.gate{position:fixed;inset:0;z-index:40;background:var(--bg);overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) 20px 32px}
-.gate .box{max-width:420px;margin:0 auto}.gate h2{font-size:2rem;font-weight:800;line-height:1.1;margin:8px 0}
-label{display:block;font-weight:500;margin:14px 0 4px}
-input,select,textarea{width:100%;font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
-.err{color:var(--accent);min-height:1.4em;margin:8px 0 0;font-size:.9rem}
-.go{width:100%;margin-top:12px;border:0;border-radius:10px;padding:14px;background:var(--accent);color:var(--accent-ink);font-weight:700}
-dialog{border:0;border-radius:18px;padding:0;width:min(440px,92vw);background:var(--surface);color:var(--text);overflow:hidden}
-dialog::backdrop{background:rgba(10,8,30,.75)}
-.dx{padding:16px}.dx h2{font-size:1.6rem;font-weight:800}
-.act{display:block;text-align:center;text-decoration:none;background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:12px;font-weight:700;margin-top:14px}
-.cl{position:absolute;top:10px;right:10px;z-index:3;border:0;border-radius:50%;width:36px;height:36px;background:rgba(20,18,43,.7);color:#fff}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+import base64
+import hashlib
+import hmac
+import json
+import os
+import re
+import secrets
+import sys
+import time
+from typing import Any, Dict, List, Optional
+from urllib.parse import urlsplit
 
-[hidden]{display:none!important}
-body{padding-bottom:84px}
-.vt{font-size:1.6rem;font-weight:800;margin:20px 0 12px}
-.vh{display:flex;justify-content:space-between;align-items:center}
-.vh h2{margin:24px 0 10px;font-size:1.25rem}
-.gl{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px}
-.gl .pc{width:auto}
-nav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;background:var(--surface);border-top:1px solid var(--line);padding:6px 4px calc(env(safe-area-inset-bottom,0px) + 6px)}
-nav button{flex:1;background:none;border:0;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.75rem;padding:6px 0}
-nav button[aria-current="page"]{color:var(--accent);font-weight:500}
-nav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.ic{position:relative;display:inline-flex}
-.ic .badge{top:-6px;right:-10px}
-.prof{display:flex;gap:14px;align-items:center;margin-top:20px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
-.av{width:60px;height:60px;border-radius:50%;background:linear-gradient(160deg,var(--accent),var(--sun));color:#14122b;display:grid;place-items:center;font:800 1.6rem "Bricolage Grotesque",sans-serif;flex:none}
-.pn{font:800 1.2rem "Bricolage Grotesque",sans-serif}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-.stats button{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;color:var(--text);display:flex;flex-direction:column;align-items:center}
-.stats b{font:800 1.5rem "Bricolage Grotesque",sans-serif;color:var(--accent)}
-.acc{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-top:12px;overflow:hidden}
-.acc summary{padding:14px 16px;font-weight:500;cursor:pointer}
-.ab{padding:0 16px 16px}
-.go.alt{background:var(--surface);color:var(--text);border:1px solid var(--line)}
-.out{width:100%;margin-top:20px;border:1px solid var(--accent);background:none;color:var(--accent);border-radius:10px;padding:12px;font-weight:700}
-.card2{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.sw{display:flex;gap:10px;align-items:center;font-weight:400;margin:14px 0 0}
-input[type=checkbox]{width:auto;accent-color:var(--accent)}
-.fb{padding:10px 0;border-bottom:1px solid var(--line);font-size:.9rem}
-</style>
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+
+try:
+    from curl_cffi import requests as cr
+except ImportError:
+    cr = None
+    import httpx
+
+if sys.stdout and hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+if sys.stderr and hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
+app = FastAPI(
+    title="MovieBox 1080p API",
+    description="REST API for MovieBox with 1080p Stream & Subtitle Extraction",
+    version="2.5.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+SECRET_KEY_DEFAULT_B64 = "NzZpUmwwN3MweFNOOWpxbUVXQXQ3OUVCSlp1bElRSXNWNjRGWnIyTw=="
+SECRET_KEY_ALT_B64 = "WHFuMm5uTzQxL0w5Mm8xaXVYaFNMSFRiWHZZNFo1Wlo2Mm04bVNMQQ=="
+MODERN_USER_AGENT = "com.community.mbox.in/50020130 (Linux; U; Android 14; en_IN; Pixel 8; Build/UD1A.230803.041; Cronet/145.0.7582.0)"
+WEB_USER_AGENT = "Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36"
+API_BASE = "https://h5-api.aoneroom.com/wefeed-h5api-bff"
+NATIVE_API_BASE = "https://api3.aoneroom.com"
+BOOTSTRAP_HOST = "https://apig.inmoviebox.com"
+BOOTSTRAP_URL = f"{BOOTSTRAP_HOST}/wefeed-mobile-bff/tab/ranking-list?tabId=0&categoryType=4516404531735022304&page=1&perPage=1"
+
+WEB_DOMAINS = [
+    "https://123moviesfree.club",
+    "https://movie-box.co",
+    "https://movieboxonline.net",
+    "https://sflix.film",
+    "https://h5-api.aoneroom.com",
+    "https://netnaija.film",
+    "https://movieboxhd.net",
+]
+
+def _b64decode(s: str) -> bytes:
+    s = s.replace("-", "+").replace("_", "/")
+    s += "=" * (-len(s) % 4)
+    return base64.b64decode(s)
+
+def get_secret_bytes(use_alt_key: bool = False) -> bytes:
+    outer = SECRET_KEY_ALT_B64 if use_alt_key else SECRET_KEY_DEFAULT_B64
+    inner = _b64decode(outer).decode("utf-8")
+    return _b64decode(inner)
+
+def md5_hex(data: bytes) -> str:
+    return hashlib.md5(data).hexdigest()
+
+def generate_device_id() -> str:
+    return secrets.token_hex(16)
+
+def generate_x_client_token(timestamp: int) -> str:
+    ts_str = str(timestamp)
+    reversed_ts = ts_str[::-1].encode("utf-8")
+    return f"{ts_str},{md5_hex(reversed_ts)}"
+
+def generate_client_info(device_id: str) -> str:
+    return json.dumps(
+        {
+            "package_name": "com.community.mbox.in",
+            "version_name": "4.0.03.0920.03",
+            "version_code": 50020130,
+            "os": "android",
+            "os_version": "14",
+            "device_id": device_id,
+            "install_store": "official",
+            "gaid": "1b2212c1-dadf-43c3-a0c8-bd6ce48ae22d",
+            "brand": "Google",
+            "model": "Pixel 8",
+            "system_language": "en",
+            "net": "NETWORK_WIFI",
+            "region": "IN",
+            "timezone": "Asia/Calcutta",
+            "sp_code": "",
+        },
+        separators=(",", ":"),
+    )
+
+def build_canonical_string(method: str, accept: str | None, content_type: str | None, url: str, body: str | None, timestamp: int) -> str:
+    parsed = urlsplit(url)
+    path = parsed.path or "/"
+    if parsed.query:
+        pairs = []
+        for segment in parsed.query.split("&"):
+            if not segment:
+                continue
+            pieces = segment.split("=", 1)
+            pairs.append((pieces[0], pieces[1] if len(pieces) > 1 else ""))
+        pairs.sort(key=lambda kv: kv[0])
+        canonical_query = "&".join(f"{k}={v}" for k, v in pairs)
+        canonical_url = f"{path}?{canonical_query}"
+    else:
+        canonical_url = path
+
+    body_bytes = body.encode("utf-8") if body is not None else None
+    if body_bytes:
+        body_length = str(len(body_bytes))
+        body_hash = md5_hex(body_bytes[:102400])
+    else:
+        body_length = ""
+        body_hash = ""
+
+    return "\n".join(
+        [
+            method.upper(),
+            accept or "",
+            content_type or "",
+            body_length,
+            str(timestamp),
+            body_hash,
+            canonical_url,
+        ]
+    )
+
+def generate_x_tr_signature(method: str, accept: str | None, content_type: str | None, url: str, body: str | None, timestamp: int, use_alt_key: bool = False) -> str:
+    canonical = build_canonical_string(method, accept, content_type, url, body, timestamp)
+    key = get_secret_bytes(use_alt_key)
+    digest = hmac.new(key, canonical.encode("utf-8"), hashlib.md5).digest()
+    sig_b64 = base64.b64encode(digest).decode("ascii")
+    return f"{timestamp}|2|{sig_b64}"
+
+def build_auth_headers(method: str, url: str, body: str | None = None, token: str | None = None, device_id: str | None = None, use_alt_key: bool = False, content_type: str = "application/json", accept: str = "application/json") -> Dict[str, str]:
+    ts = int(time.time() * 1000)
+    dev_id = device_id or generate_device_id()
+    headers = {
+        "user-agent": MODERN_USER_AGENT,
+        "accept": accept,
+        "content-type": content_type,
+        "connection": "keep-alive",
+        "x-client-token": generate_x_client_token(ts),
+        "x-tr-signature": generate_x_tr_signature(method, accept, content_type, url, body, ts, use_alt_key),
+        "x-client-info": generate_client_info(dev_id),
+        "x-client-status": "0",
+    }
+    if token:
+        headers["authorization"] = f"Bearer {token}"
+    return headers
+
+def extract_policy_resource(sign_cookie: str | None) -> str | None:
+    if not sign_cookie:
+        return None
+    m_edge = re.search(r"Edge-Cache-Cookie=urlprefix=([^:;\s]+)", sign_cookie)
+    if m_edge:
+        try:
+            decoded = _b64decode(m_edge.group(1)).decode("utf-8").rstrip("/")
+            return decoded + "/index.mpd"
+        except Exception:
+            pass
+    m_cf = re.search(r"CloudFront-Policy=([^;]+)", sign_cookie)
+    if m_cf:
+        raw = m_cf.group(1)
+        for t in ("cf", "std"):
+            try:
+                b = raw.replace("-", "+").replace("_", "=") if t == "cf" else raw
+                b += "=" * (-len(b) % 4)
+                data = json.loads(base64.b64decode(b).decode("utf-8"))
+                for s in data.get("Statement", []):
+                    res = s.get("Resource")
+                    if res:
+                        return res.rstrip("*").rstrip("/") + "/index.mpd"
+            except Exception:
+                pass
+    return None
+
+class MovieBoxEngine:
+    _instance = None
+
+    def __init__(self):
+        self.device_id = generate_device_id()
+        self.bearer_token: Optional[str] = None
+        if cr:
+            self.session = cr.Session(impersonate="chrome120")
+        else:
+            self.session = httpx.Client(timeout=25, follow_redirects=True)
+
+    @classmethod
+    def get_instance(cls) -> "MovieBoxEngine":
+        if cls._instance is None:
+            cls._instance = MovieBoxEngine()
+        return cls._instance
+
+    def bootstrap_token(self, force: bool = False) -> str:
+        if self.bearer_token and not force:
+            return self.bearer_token
+        headers = build_auth_headers("GET", BOOTSTRAP_URL, device_id=self.device_id)
+        resp = self.session.get(BOOTSTRAP_URL, headers=headers, timeout=20)
+        x_user = resp.headers.get("x-user")
+        if not x_user:
+            raise HTTPException(status_code=502, detail="Failed to bootstrap MovieBox token")
+        token_data = json.loads(x_user)
+        token = token_data.get("token")
+        if not token:
+            raise HTTPException(status_code=502, detail="Empty token in upstream header")
+        self.bearer_token = token
+        return token
+
+    def api_request(self, method: str, path_or_url: str, body_dict: Optional[Dict[str, Any]] = None, use_token: bool = True, retry_auth: bool = True) -> Dict[str, Any]:
+        if path_or_url.startswith("http://") or path_or_url.startswith("https://"):
+            full_url = path_or_url
+        else:
+            full_url = f"{NATIVE_API_BASE}{path_or_url}"
+        if use_token and not self.bearer_token:
+            self.bootstrap_token()
+        body_str = json.dumps(body_dict, separators=(",", ":")) if body_dict is not None else None
+        headers = build_auth_headers(
+            method=method,
+            url=full_url,
+            body=body_str,
+            token=self.bearer_token if use_token else None,
+            device_id=self.device_id,
+        )
+        data_bytes = body_str.encode("utf-8") if body_str is not None else None
+        if method.upper() == "POST":
+            resp = self.session.post(full_url, headers=headers, data=data_bytes, timeout=25)
+        else:
+            resp = self.session.get(full_url, headers=headers, timeout=25)
+        if resp.status_code in (401, 441) and retry_auth:
+            self.bootstrap_token(force=True)
+            return self.api_request(method, path_or_url, body_dict, use_token, retry_auth=False)
+        if resp.status_code != 200:
+            raise HTTPException(status_code=502, detail=f"API returned HTTP {resp.status_code}")
+        return resp.json()
+
+    def search(self, query: str, page: int = 1, per_page: int = 20) -> List[Dict[str, Any]]:
+        payload = {"keyword": query, "page": page, "perPage": per_page}
+        url = "/wefeed-mobile-bff/subject-api/search"
+        data = self.api_request("POST", url, body_dict=payload).get("data", {})
+        raw_items = data.get("items", []) or data.get("list", [])
+        results = []
+        for item in raw_items:
+            sub = item.get("subject", item)
+            results.append({
+                "subject_id": str(sub.get("subjectId")),
+                "title": sub.get("title"),
+                "type": "Movie" if sub.get("subjectType") == 1 else "Series",
+                "subject_type": sub.get("subjectType"),
+                "release_date": sub.get("releaseDate"),
+                "imdb_rating": sub.get("imdbRatingValue"),
+                "genre": sub.get("genre"),
+                "cover": sub.get("cover", {}).get("url") if isinstance(sub.get("cover"), dict) else None,
+                "detail_path": sub.get("detailPath"),
+                "language": sub.get("language")
+            })
+        return results
+
+    def get_details(self, subject_id: str) -> Dict[str, Any]:
+        url = f"/wefeed-mobile-bff/subject-api/get?subjectId={subject_id}"
+        data = self.api_request("GET", url).get("data", {})
+        detail_url_str = data.get("detailUrl", "")
+        detail_path = detail_url_str.split("/")[-1] if "/" in detail_url_str else detail_url_str
+        return {
+            "subject_id": str(data.get("subjectId")),
+            "title": data.get("title"),
+            "subject_type": data.get("subjectType"),
+            "type": "Movie" if data.get("subjectType") == 1 else "Series",
+            "description": data.get("description"),
+            "release_date": data.get("releaseDate"),
+            "duration": data.get("duration"),
+            "imdb_rating": data.get("imdbRatingValue"),
+            "genre": data.get("genre"),
+            "country": data.get("countryName"),
+            "language": data.get("language"),
+            "cover": data.get("cover", {}).get("url") if isinstance(data.get("cover"), dict) else None,
+            "detail_path": detail_path,
+            "dubs": [
+                {
+                    "subject_id": str(d.get("subjectId")),
+                    "lang_name": d.get("lanName"),
+                    "language": d.get("language"),
+                }
+                for d in data.get("dubs", [])
+                if isinstance(d, dict)
+            ]
+        }
+
+    def get_episodes(self, subject_id: str) -> List[Dict[str, Any]]:
+        url = f"/wefeed-mobile-bff/subject-api/season-info?subjectId={subject_id}"
+        res = self.api_request("GET", url)
+        seasons = res.get("data", {}).get("seasons", [])
+        season_list = []
+        for s in seasons:
+            season_list.append({
+                "season": s.get("se", 1),
+                "episode_count": s.get("maxEp", 1),
+                "resolutions": s.get("resolutions", [])
+            })
+        return season_list
+
+    def get_streams(self, subject_id: str, season: int = 0, episode: int = 0, detail_path: Optional[str] = None) -> List[Dict[str, Any]]:
+        if not detail_path:
+            try:
+                details = self.get_details(subject_id)
+                detail_path = details.get("detail_path", "")
+            except Exception:
+                detail_path = ""
+        token = self.bootstrap_token()
+        streams: List[Dict[str, Any]] = []
+        seen_urls = set()
+
+        for domain in WEB_DOMAINS:
+            play_url = (
+                f"{domain}/wefeed-h5api-bff/subject/play?"
+                f"subjectId={subject_id}&se={season}&ep={episode}&detailPath={detail_path}&"
+                f"streamSignType=1&supportCodecs%5Bhevc%5D=1&supportCodecs%5Bh264%5D=1"
+            )
+            referer = f"{domain}/movies/{detail_path}?id={subject_id}&type=/movie/detail&detailSe=&detailEp=&lang=en"
+            headers = {
+                "User-Agent": WEB_USER_AGENT,
+                "Referer": referer,
+                "Accept": "application/json",
+                "x-client-info": '{"timezone":"Asia/Calcutta"}',
+                "x-request-lang": "en",
+                "x-vip-restrict": "0",
+                "x-no-high-risk-restrict": "0",
+                "x-source": "moviebox",
+                "Authorization": f"Bearer {token}",
+            }
+            try:
+                resp = self.session.get(play_url, headers=headers, timeout=12)
+                if resp.status_code != 200:
+                    continue
+                data = resp.json().get("data", {})
+                raw_streams = data.get("streams", [])
+                dash_items = data.get("dash", [])
+
+                if raw_streams or dash_items:
+                    for st in raw_streams:
+                        url = st.get("url")
+                        if not url or url in seen_urls:
+                            continue
+                        seen_urls.add(url)
+                        res_str = str(st.get("resolutions", "unknown"))
+                        size_bytes = int(st.get("size") or 0)
+                        size_mb = size_bytes / (1024 * 1024) if size_bytes else 0
+                        quality_val = 0
+                        for q in (2160, 1440, 1080, 720, 480, 360, 240):
+                            if str(q) in res_str:
+                                quality_val = q
+                                break
+                        streams.append({
+                            "source": f"Web CDN ({domain})",
+                            "format": st.get("format", "MP4"),
+                            "quality": f"{quality_val}p" if quality_val else res_str,
+                            "quality_value": quality_val,
+                            "resolution_tag": res_str,
+                            "url": url,
+                            "size_mb": round(size_mb, 1),
+                            "codec": st.get("codecName"),
+                            "duration_sec": st.get("duration"),
+                            "headers": {
+                                "User-Agent": "Mozilla/5.0",
+                                "Referer": f"{domain}/",
+                                "Origin": domain,
+                            }
+                        })
+
+                    for d in dash_items:
+                        url = d.get("url")
+                        cookie = d.get("signCookie")
+                        extracted_mpd = extract_policy_resource(cookie) if cookie else None
+                        final_url = extracted_mpd or url
+                        if final_url and final_url not in seen_urls:
+                            seen_urls.add(final_url)
+                            res_tag = str(d.get("resolutions", "adaptive"))
+                            streams.append({
+                                "source": f"Web DASH ({domain})",
+                                "format": "DASH",
+                                "quality": "1080p (Adaptive)" if "1080" in res_tag else "Adaptive",
+                                "quality_value": 1080 if "1080" in res_tag else 999,
+                                "resolution_tag": res_tag,
+                                "url": final_url,
+                                "size_mb": 0,
+                                "codec": "hevc/h264",
+                                "duration_sec": None,
+                                "cookie": cookie,
+                                "headers": {
+                                    "User-Agent": "Mozilla/5.0",
+                                    "Referer": f"{domain}/",
+                                    "Origin": domain,
+                                }
+                            })
+                    break
+            except Exception:
+                continue
+
+        try:
+            native_url = f"/wefeed-mobile-bff/subject-api/play-info?subjectId={subject_id}&se={season}&ep={episode}"
+            native_data = self.api_request("GET", native_url).get("data", {})
+            for st in native_data.get("streams", []):
+                raw_url = st.get("url")
+                if not raw_url or "b164fbfb4347792950bdfbfb563d39d9" in raw_url:
+                    continue
+                cookie = st.get("signCookie")
+                policy_url = extract_policy_resource(cookie) if cookie else None
+                final_url = policy_url or raw_url
+                if final_url in seen_urls:
+                    continue
+                seen_urls.add(final_url)
+                res_str = str(st.get("resolutions", ""))
+                quality_val = 0
+                for q in (2160, 1440, 1080, 720, 480, 360, 240):
+                    if str(q) in res_str:
+                        quality_val = q
+                        break
+                size_bytes = int(st.get("size") or 0)
+                size_mb = size_bytes / (1024 * 1024) if size_bytes else 0
+                streams.append({
+                    "source": "Mobile Native CDN",
+                    "format": "DASH" if (policy_url or ".mpd" in final_url) else st.get("format", "MP4"),
+                    "quality": f"{quality_val}p" if quality_val else (res_str or "Default"),
+                    "quality_value": quality_val,
+                    "resolution_tag": res_str,
+                    "url": final_url,
+                    "size_mb": round(size_mb, 1),
+                    "codec": st.get("codecName"),
+                    "duration_sec": st.get("duration"),
+                    "headers": {
+                        "User-Agent": MODERN_USER_AGENT,
+                        "Referer": "https://api3.aoneroom.com/",
+                    }
+                })
+        except Exception:
+            pass
+
+        streams.sort(key=lambda s: s["quality_value"], reverse=True)
+        return streams
+
+    def get_subtitles(self, subject_id: str, stream_id: Optional[str] = None, season: int = 0, episode: int = 0) -> List[Dict[str, Any]]:
+        subs: List[Dict[str, Any]] = []
+        seen_urls = set()
+
+        if not stream_id:
+            try:
+                native_url = f"/wefeed-mobile-bff/subject-api/play-info?subjectId={subject_id}&se={season}&ep={episode}"
+                raw_streams = self.api_request("GET", native_url).get("data", {}).get("streams", [])
+                if raw_streams and raw_streams[0].get("id"):
+                    stream_id = str(raw_streams[0]["id"])
+            except Exception:
+                pass
+
+        def _add_sub(item: Dict[str, Any]):
+            u = item.get("url")
+            if u and u not in seen_urls:
+                seen_urls.add(u)
+                subs.append({
+                    "id": str(item.get("id", "")),
+                    "language": item.get("lanName") or item.get("language") or "English",
+                    "code": item.get("lan", ""),
+                    "url": u,
+                    "size": item.get("size")
+                })
+
+        if stream_id:
+            try:
+                url = f"/wefeed-mobile-bff/subject-api/get-stream-captions?subjectId={subject_id}&streamId={stream_id}"
+                data = self.api_request("GET", url).get("data", {})
+                captions = data if isinstance(data, list) else data.get("extCaptions") or data.get("captions") or []
+                for s in captions:
+                    if isinstance(s, dict):
+                        _add_sub(s)
+            except Exception:
+                pass
+
+        try:
+            res_id = stream_id or "0"
+            url = f"/wefeed-mobile-bff/subject-api/get-ext-captions?subjectId={subject_id}&resourceId={res_id}&episode={episode}"
+            data = self.api_request("GET", url).get("data", {})
+            ext = data if isinstance(data, list) else data.get("extCaptions") or data.get("captions") or []
+            for s in ext:
+                if isinstance(s, dict):
+                    _add_sub(s)
+        except Exception:
+            pass
+
+        return subs
+
+engine = MovieBoxEngine.get_instance()
+
+@app.get("/", response_class=HTMLResponse)
+async def dashboard():
+    html_content = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieBox API</title>
+    <style>
+        :root {
+            --bg: #09090b;
+            --surface: #121215;
+            --surface-hover: #18181b;
+            --border: #27272a;
+            --text: #fafafa;
+            --text-dim: #71717a;
+            --accent: #3b82f6;
+            --accent-soft: rgba(59, 130, 246, 0.12);
+            --green: #10b981;
+            --green-soft: rgba(16, 185, 129, 0.12);
+            --radius: 8px;
+            --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 32px 20px;
+        }
+        .wrap {
+            max-width: 980px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .brand h1 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+        .pill {
+            font-size: 11px;
+            font-family: var(--mono);
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: var(--border);
+            color: var(--text-dim);
+        }
+        .pill.active {
+            background: var(--green-soft);
+            color: var(--green);
+        }
+        .section-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px;
+        }
+        .search-bar {
+            display: flex;
+            gap: 8px;
+            position: relative;
+        }
+        .input-text {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 14px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+        }
+        .input-text:focus {
+            border-color: var(--accent);
+        }
+        .input-num {
+            width: 80px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 12px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            outline: none;
+        }
+        .btn-action {
+            background: var(--text);
+            color: var(--bg);
+            border: none;
+            padding: 10px 18px;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn-action:hover {
+            opacity: 0.9;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        .btn-ghost:hover {
+            background: var(--surface-hover);
+        }
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-top: 4px;
+            max-height: 240px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+        }
+        .dropdown-item {
+            padding: 10px 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1c1c20;
+        }
+        .dropdown-item:hover {
+            background: var(--surface-hover);
+        }
+        .media-row {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .media-poster {
+            width: 44px;
+            height: 62px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: var(--border);
+        }
+        .stream-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        .stream-row:last-child {
+            border-bottom: none;
+        }
+        .stream-spec {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .stream-badge {
+            font-family: var(--mono);
+            font-weight: 600;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+        .stream-badge.hd {
+            background: var(--green-soft);
+            color: var(--green);
+        }
+        .video-box {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        video {
+            width: 100%;
+            max-height: 480px;
+            background: #000;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .endpoint-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .endpoint-table th, .endpoint-table td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        .endpoint-table tr:last-child td {
+            border-bottom: none;
+        }
+        .endpoint-method {
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .endpoint-path {
+            font-family: var(--mono);
+            color: var(--text);
+        }
+    </style>
 </head>
 <body>
-<header>
-  <div class="brand">Horizon <span>VIBES</span></div>
-</header>
+    <div class="wrap">
+        <header>
+            <div class="brand">
+                <h1>MovieBox API</h1>
+                <span class="pill">v2.5.0</span>
+                <span class="pill active">1080p Online</span>
+            </div>
+            <div>
+                <a class="btn-ghost" href="/docs" target="_blank">Swagger Docs</a>
+            </div>
+        </header>
 
-<div id="v-home">
-<section class="hero" id="hero">
-  <div class="hbg" id="hbg"></div>
-  <div class="htx">
-    <span class="hk" id="hk">À la une</span>
-    <h1 id="ht">Des histoires à emporter.</h1>
-    <p class="hd" id="hd"></p>
-    <button class="cta" id="hb" hidden>Voir les détails</button>
-  </div>
-</section>
+        <div>
+            <div class="section-title">Stream & Subtitle Resolver</div>
+            <div class="box">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" class="input-text" placeholder="Search title or paste Subject ID (e.g. Avatar, 8906247916759695608)..." autocomplete="off">
+                    <input type="number" id="seasonInput" class="input-num" placeholder="S" title="Season" value="0">
+                    <input type="number" id="episodeInput" class="input-num" placeholder="E" title="Episode" value="0">
+                    <button class="btn-action" onclick="resolveStreams()">Resolve</button>
+                    <div id="dropdownList" class="dropdown"></div>
+                </div>
 
-<main>
-  <p id="hello" style="color:var(--muted);margin:16px 0 0"></p>
-  <input id="q" type="search" placeholder="Chercher un film, un animé, un manga" aria-label="Rechercher">
-  <div id="rows"></div>
-  
-  
-</main>
-</div>
+                <div id="mediaHeader" style="display: none;" class="media-row">
+                    <img id="mediaPoster" class="media-poster">
+                    <div>
+                        <div id="mediaTitle" style="font-weight: 600; font-size: 15px;"></div>
+                        <div id="mediaMeta" style="font-size: 12px; color: var(--text-dim); margin-top: 2px;"></div>
+                    </div>
+                </div>
 
-<div id="v-list" hidden><main><h2 class="vt">Ma liste</h2><div class="gl" id="mylist"></div></main></div>
+                <div class="video-box" id="playerContainer">
+                    <video id="player" controls playsinline></video>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span id="playerStatus" style="font-size: 12px; color: var(--text-dim); font-family: var(--mono);"></span>
+                        <select id="subPicker" onchange="switchSubtitle(this.value)" class="input-text" style="max-width: 220px; padding: 6px 10px; font-size: 12px;">
+                            <option value="">Subtitles Off</option>
+                        </select>
+                    </div>
+                </div>
 
-<div id="v-msg" hidden><main>
-  <div class="vh"><h2 class="vt">Messages</h2><button class="link" id="readall">Tout marquer comme lu</button></div>
-  <div class="card2" id="nlist"></div>
-</main></div>
+                <div id="streamList" style="margin-top: 14px;"></div>
+            </div>
+        </div>
 
-<div id="v-me" hidden><main>
-  <section class="prof"><div class="av" id="mav"></div><div><div class="pn" id="mname"></div><div class="meta" id="mmail"></div><div class="meta" id="mid"></div></div></section>
-  <div class="stats"><button id="s1"><b id="c1">0</b><span>Dans ma liste</span></button><button id="s2"><b id="c2">0</b><span>Messages non lus</span></button></div>
-  <section class="sec"><div class="vh"><h2>Historique de consultation</h2><button class="link" id="clearh">Effacer</button></div><div class="row" id="hrow"></div></section>
+        <div>
+            <div class="section-title">Endpoints (Click Test to Open Raw JSON)</div>
+            <div class="box" style="padding: 0;">
+                <table class="endpoint-table">
+                    <thead>
+                        <tr style="color: var(--text-dim); font-size: 11px; text-transform: uppercase;">
+                            <th style="width: 70px;">Method</th>
+                            <th>Endpoint Path</th>
+                            <th>Description</th>
+                            <th style="width: 110px; text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="endpoint-method">GET</span></td>
+                            <td class="endpoint-path"><span class="pill" style="margin-right: 6px;">Movie</span>/api/stream/8906247916759695608</td>
+                            <td style="color: var(--text-dim);">Movie Streams 1080p, 720p, 480p (Avatar)</td>
+                            <td style="text-align: right;"><a href="/api/stream/8906247916759695608" target="_blank" class="btn-ghost">Test</a></td>
+                        </tr>
+                        <tr>
+                            <td><span class="endpoint-method">GET</span></td>
+                            <td class="endpoint-path"><span class="pill" style="margin-right: 6px;">Movie</span>/api/stream/8906247916759695608/captions</td>
+                            <td style="color: var(--text-dim);">Movie Subtitle Tracks .srt (Avatar)</td>
+                            <td style="text-align: right;"><a href="/api/stream/8906247916759695608/captions" target="_blank" class="btn-ghost">Test</a></td>
+                        </tr>
+                        <tr>
+                            <td><span class="endpoint-method">GET</span></td>
+                            <td class="endpoint-path"><span class="pill active" style="margin-right: 6px;">Series</span>/episodes/6207982430134357800</td>
+                            <td style="color: var(--text-dim);">TV Seasons & Episode Counts (Breaking Bad)</td>
+                            <td style="text-align: right;"><a href="/episodes/6207982430134357800" target="_blank" class="btn-ghost">Test</a></td>
+                        </tr>
+                        <tr>
+                            <td><span class="endpoint-method">GET</span></td>
+                            <td class="endpoint-path"><span class="pill active" style="margin-right: 6px;">Series</span>/api/stream/6207982430134357800?se=1&ep=1</td>
+                            <td style="color: var(--text-dim);">TV Episode Stream: Season 1, Episode 1</td>
+                            <td style="text-align: right;"><a href="/api/stream/6207982430134357800?se=1&ep=1" target="_blank" class="btn-ghost">Test</a></td>
+                        </tr>
+                        <tr>
+                            <td><span class="endpoint-method">GET</span></td>
+                            <td class="endpoint-path"><span class="pill active" style="margin-right: 6px;">Series</span>/api/stream/6207982430134357800?se=1&ep=2</td>
+                            <td style="color: var(--text-dim);">TV Episode Stream: Season 1, Episode 2</td>
+                            <td style="text-align: right;"><a href="/api/stream/6207982430134357800?se=1&ep=2" target="_blank" class="btn-ghost">Test</a></td>
+                        </tr>
+                        <tr>
+                            <td><span class="endpoint-method">GET</span></td>
+                            <td class="endpoint-path"><span class="pill active" style="margin-right: 6px;">Series</span>/api/stream/6207982430134357800/captions?se=1&ep=1</td>
+                            <td style="color: var(--text-dim);">TV Episode Subtitles: Season 1, Episode 1</td>
+                            <td style="text-align: right;"><a href="/api/stream/6207982430134357800/captions?se=1&ep=1" target="_blank" class="btn-ghost">Test</a></td>
+                        </tr>
+                        <tr>
+                            <td><span class="endpoint-method">GET</span></td>
+                            <td class="endpoint-path">/search?q=Avatar</td>
+                            <td style="color: var(--text-dim);">Search catalog with metadata & IDs</td>
+                            <td style="text-align: right;"><a href="/search?q=Avatar" target="_blank" class="btn-ghost">Test</a></td>
+                        </tr>
+                        <tr>
+                            <td><span class="endpoint-method">GET</span></td>
+                            <td class="endpoint-path">/search/suggest?q=Avatar</td>
+                            <td style="color: var(--text-dim);">Real-time search autocomplete suggestions</td>
+                            <td style="text-align: right;"><a href="/search/suggest?q=Avatar" target="_blank" class="btn-ghost">Test</a></td>
+                        </tr>
+                        <tr>
+                            <td><span class="endpoint-method">GET</span></td>
+                            <td class="endpoint-path">/detail/8906247916759695608</td>
+                            <td style="color: var(--text-dim);">Deep metadata, audio dubs, and plot summary</td>
+                            <td style="text-align: right;"><a href="/detail/8906247916759695608" target="_blank" class="btn-ghost">Test</a></td>
+                        </tr>
+                        <tr>
+                            <td><span class="endpoint-method">GET</span></td>
+                            <td class="endpoint-path">/movies?page=1</td>
+                            <td style="color: var(--text-dim);">Paginated movie feed</td>
+                            <td style="text-align: right;"><a href="/movies?page=1" target="_blank" class="btn-ghost">Test</a></td>
+                        </tr>
+                        <tr>
+                            <td><span class="endpoint-method">GET</span></td>
+                            <td class="endpoint-path">/tv-series?page=1</td>
+                            <td style="color: var(--text-dim);">Paginated TV series feed</td>
+                            <td style="text-align: right;"><a href="/tv-series?page=1" target="_blank" class="btn-ghost">Test</a></td>
+                        </tr>
+                        <tr>
+                            <td><span class="endpoint-method">GET</span></td>
+                            <td class="endpoint-path">/home</td>
+                            <td style="color: var(--text-dim);">Banners, hot sections, and operating feeds</td>
+                            <td style="text-align: right;"><a href="/home" target="_blank" class="btn-ghost">Test</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-  <details class="acc"><summary>Mes téléchargements</summary><div class="ab"><div id="dllist"></div><p class="meta">Les vidéos téléchargées restent dans l’application, sur cet appareil, et n’apparaissent pas dans le gestionnaire de fichiers.</p></div></details>
+    <script>
+        let searchTimer = null;
+        let activeSubjectId = "";
+        const searchInput = document.getElementById("searchInput");
+        const dropdownList = document.getElementById("dropdownList");
 
-  <details class="acc"><summary>Paramètres</summary><div class="ab">
-    <label for="sth">Thème</label>
-    <select id="sth"><option value="auto">Automatique</option><option value="light">Clair</option><option value="dark">Sombre</option></select>
-    <label class="sw"><input type="checkbox" id="salert"> Alertes de nouveautés dans l’application</label>
-    <label class="sw"><input type="checkbox" id="spush"> Notifications push sur cet appareil</label>
-    <p class="err" id="spe" role="alert"></p>
-    <label for="spn">Prénom</label><input id="spn" autocomplete="given-name">
-    <label for="snm">Nom</label><input id="snm" autocomplete="family-name">
-    <button class="go" id="ssave" type="button">Enregistrer mon nom</button>
-    <button class="go alt" id="spw" type="button">Changer mon mot de passe (par e-mail)</button>
-    <button class="go alt" id="sdel" type="button">Supprimer mon compte</button>
-    <p class="err" id="sme" role="alert"></p>
-  </div></details>
+        searchInput.addEventListener("input", (e) => {
+            clearTimeout(searchTimer);
+            const val = e.target.value.trim();
+            if (val.length < 2) {
+                dropdownList.style.display = "none";
+                return;
+            }
+            if (/^\\d{15,}$/.test(val)) {
+                activeSubjectId = val;
+                dropdownList.style.display = "none";
+                return;
+            }
+            searchTimer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/search/suggest?q=${encodeURIComponent(val)}`);
+                    const data = await res.json();
+                    const list = data.suggestions || [];
+                    if (!list.length) {
+                        dropdownList.style.display = "none";
+                        return;
+                    }
+                    dropdownList.innerHTML = list.map(item => `
+                        <div class="dropdown-item" onclick="selectItem('${item.subject_id}', '${item.title.replace(/'/g, "\\\\'")}')">
+                            <span style="font-weight: 500;">${item.title}</span>
+                            <span style="font-family: var(--mono); font-size: 11px; color: var(--text-dim);">${item.subject_id}</span>
+                        </div>
+                    `).join("");
+                    dropdownList.style.display = "block";
+                } catch (err) {}
+            }, 200);
+        });
 
-  <details class="acc"><summary>Aide et signalement</summary><div class="ab">
-    <label for="ft">Type de message</label>
-    <select id="ft"><option>Avis</option><option>Problème technique</option><option>Signaler un contenu</option><option>Demande de retrait (droits d’auteur)</option></select>
-    <label for="fm">Ton message</label><textarea id="fm" rows="4" maxlength="1000"></textarea>
-    <p class="err" id="fe" role="alert"></p>
-    <button class="go" id="fsend" type="button">Envoyer</button>
-  </div></details>
+        function selectItem(id, title) {
+            activeSubjectId = id;
+            searchInput.value = title;
+            dropdownList.style.display = "none";
+            resolveStreams();
+        }
 
-  <details class="acc"><summary>À propos et crédits</summary><div class="ab">
-    <p>Horizon VIBES propose des films libres de droits et des liens vers les plateformes officielles. Version 1.1.</p>
-    <p class="meta">Films Blender : © Blender Foundation / Blender Studio, licence Creative Commons. Titulaire de droits ? Utilise « Demande de retrait » dans Aide et signalement.</p>
-  </div></details>
+        async function resolveStreams() {
+            const val = searchInput.value.trim();
+            const subjectId = /^\\d{15,}$/.test(val) ? val : (activeSubjectId || val);
+            const se = parseInt(document.getElementById("seasonInput").value) || 0;
+            const ep = parseInt(document.getElementById("episodeInput").value) || 0;
 
-  <section id="admin" hidden>
-    <h2 style="font-size:1.4rem;margin-top:32px">Ajouter une nouveauté</h2>
-    <p class="note" style="margin-top:4px">Réservé à l’administrateur. N’ajoute que des contenus libres de droits ou dont tu as l’autorisation, y compris pour l’affiche.</p>
-    <button class="go" id="seed" type="button" style="margin-bottom:8px">Importer le catalogue (14 contenus)</button>
-    <p class="err" id="serr" role="alert"></p>
-    <form id="aform" novalidate>
-      <label for="at">Titre</label><input id="at">
-      <label for="ak">Catégorie</label><select id="ak"><option>Films</option><option>Séries</option><option>Animés</option><option>Mangas</option></select>
-      <label for="ay">Année</label><input id="ay" inputmode="numeric">
-      <label for="ad">Résumé</label><textarea id="ad" rows="3"></textarea>
-      <label for="av">Lien vidéo du film (mp4, https)</label><input id="av" type="url" placeholder="https://">
-      <label for="ae">Épisodes (séries et animés) : une ligne par épisode</label><textarea id="ae" rows="4" placeholder="S1E1 | Titre | https://lien.mp4"></textarea>
-      <label for="ap">Affiche (https://… ou posters/nom.jpg)</label><input id="ap">
-      <label for="au">Lien officiel</label><input id="au" type="url" placeholder="https://">
-      <p class="err" id="aerr" role="alert"></p>
-      <button class="go" type="submit">Publier et notifier</button>
-    </form>
-    <h2 style="font-size:1.2rem;margin-top:24px">Messages reçus</h2><div id="fblist"></div>
-  </section>
+            if (!subjectId) {
+                alert("Please enter a title or Subject ID");
+                return;
+            }
 
-  <button class="out" id="logout">Se déconnecter</button>
-</main></div>
+            const streamList = document.getElementById("streamList");
+            streamList.innerHTML = '<div style="padding: 12px; color: var(--text-dim); font-size: 13px;">Resolving streams...</div>';
 
-<nav aria-label="Navigation principale">
-  <button data-v="home" aria-current="page"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Accueil</button>
-  <button data-v="list"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span>Ma liste</button>
-  <button data-v="msg"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0"/></svg><span class="badge" id="nb" hidden>0</span></span>Messages</button>
-  <button data-v="me"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>Moi</button>
-</nav>
+            try {
+                const [streamRes, capRes, detailRes] = await Promise.all([
+                    fetch(`/api/stream/${subjectId}?se=${se}&ep=${ep}`).then(r => r.json()),
+                    fetch(`/api/stream/${subjectId}/captions?se=${se}&ep=${ep}`).then(r => r.json()),
+                    fetch(`/detail/${subjectId}`).then(r => r.json()).catch(() => null)
+                ]);
 
+                if (detailRes && detailRes.title) {
+                    document.getElementById("mediaHeader").style.display = "flex";
+                    document.getElementById("mediaTitle").textContent = `${detailRes.title} (${detailRes.type})`;
+                    document.getElementById("mediaMeta").textContent = `${detailRes.release_date || ""} • IMDb: ${detailRes.imdb_rating || "N/A"} • ${detailRes.genre || ""}`;
+                    if (detailRes.cover) {
+                        const p = document.getElementById("mediaPoster");
+                        p.src = detailRes.cover;
+                        p.style.display = "block";
+                    }
+                }
 
-<dialog id="pdlg"><button class="cl" id="pcl" aria-label="Fermer le lecteur">✕</button><video id="pv" controls playsinline style="width:100%;display:block;background:#000;max-height:60vh"></video><div class="dx"><h2 id="pt" style="font-size:1.1rem"></h2></div></dialog>
+                const streams = streamRes.streams || [];
+                if (!streams.length) {
+                    streamList.innerHTML = '<div style="padding: 12px; color: var(--text-dim); font-size: 13px;">No streams found for this request.</div>';
+                    return;
+                }
 
-<dialog id="dlg"><button class="cl" id="dcl" aria-label="Fermer">✕</button><div id="dp"></div><div class="dx"><h2 id="dt"></h2><div class="meta" id="dm"></div><p id="dd"></p><div id="eps"></div><p class="err" id="dmsg" role="alert"></p><button class="act" id="dwatch" type="button" hidden>▶ Regarder dans l’application</button><button class="act" id="ddl" type="button" hidden style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><button class="act" id="dfav" type="button" style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><a class="act" id="da" target="_blank" rel="noopener noreferrer"></a><button class="act" id="ddel" type="button" hidden style="width:100%;background:none;border:1px solid var(--accent);color:var(--accent)">Supprimer ce contenu</button></div></dialog>
+                streamList.innerHTML = streams.map((s, idx) => `
+                    <div class="stream-row">
+                        <div class="stream-spec">
+                            <span class="stream-badge ${s.quality.includes('1080') ? 'hd' : ''}">${s.quality}</span>
+                            <span style="font-weight: 500;">${s.format}</span>
+                            <span style="color: var(--text-dim); font-size: 12px;">${s.size_mb ? s.size_mb + ' MB' : 'DASH Master'}</span>
+                            <span style="color: var(--text-dim); font-size: 12px;">${s.codec || ''}</span>
+                        </div>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="btn-ghost" onclick="play('${encodeURIComponent(JSON.stringify(s))}')">Play</button>
+                            <a class="btn-ghost" href="${s.url}" target="_blank">Open Raw</a>
+                            <button class="btn-ghost" onclick="copyUrl('${s.url}')">Copy</button>
+                        </div>
+                    </div>
+                `).join("");
 
-<section class="gate" id="gate" hidden>
-  <div class="box">
-    <div class="brand">Horizon <span>VIBES</span></div>
-    <h2 id="gtitle">Crée ton compte pour entrer.</h2>
-    <p style="color:var(--muted)">C’est gratuit. Il nous faut ton nom, ton prénom, ton e-mail et un mot de passe.</p>
-    <form id="form" novalidate>
-      <div id="nameRow">
-        <label for="prenom">Prénom</label><input id="prenom" autocomplete="given-name">
-        <label for="nom">Nom</label><input id="nom" autocomplete="family-name">
-      </div>
-      <label for="email">Adresse e-mail</label><input id="email" type="email" autocomplete="email">
-      <label for="pw">Mot de passe (6 caractères minimum)</label><input id="pw" type="password" autocomplete="current-password">
-      <p class="err" id="err" role="alert"></p>
-      <button class="go" id="go" type="submit">Créer mon compte</button>
-      <p><button class="link" id="switch" type="button">Déjà un compte ? Connecte-toi</button></p>
-    </form>
-  </div>
-</section>
+                const subs = capRes.captions || [];
+                const subPicker = document.getElementById("subPicker");
+                subPicker.innerHTML = '<option value="">Subtitles Off</option>' + subs.map(sub => `
+                    <option value="${sub.url}">${sub.language}</option>
+                `).join("");
 
-<script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,sendPasswordResetEmail,deleteUser} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,collection,doc,setDoc,getDoc,addDoc,deleteDoc,onSnapshot,query,orderBy,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import {getMessaging,getToken,isSupported} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
+            } catch (err) {
+                streamList.innerHTML = `<div style="padding: 12px; color: #ef4444; font-size: 13px;">Failed: ${err.message}</div>`;
+            }
+        }
 
-// 1) Colle ici la configuration Firebase (voir README.md). Même valeurs dans firebase-messaging-sw.js
-const firebaseConfig={apiKey:"AIzaSyAVf4AMYS7UndWcE8FfvrHJDIDb5quMKKY",authDomain:"horizon-vibes.firebaseapp.com",projectId:"horizon-vibes",messagingSenderId:"104450953401",appId:"1:104450953401:web:d4fd62890ed18dca1acb68"};
-// 2) Clé Web Push (Firebase > Paramètres du projet > Cloud Messaging > Certificats Web Push)
-const VAPID_KEY="";
+        function play(encoded) {
+            const stream = JSON.parse(decodeURIComponent(encoded));
+            const player = document.getElementById("player");
+            const container = document.getElementById("playerContainer");
+            container.style.display = "flex";
+            document.getElementById("playerStatus").textContent = `Playing: ${stream.quality} ${stream.format}`;
+            player.src = stream.url;
+            player.play().catch(() => {});
+        }
 
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
-const $=s=>document.querySelector(s);
-let mode="signup",items=[],read=[],uid=null,first=true,unsub=null,unsubF=null,favs=[],hist=[],unread=0,cur=null,isAdmin=false,prefs={theme:"auto",alerts:true,push:false},me={prenom:"",nom:"",email:""};
-const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-const ERR={"auth/email-already-in-use":"Cette adresse a déjà un compte. Connecte-toi.","auth/invalid-credential":"E-mail ou mot de passe incorrect.","auth/weak-password":"Le mot de passe doit avoir au moins 6 caractères.","auth/network-request-failed":"Pas de connexion. Vérifie ton réseau et réessaie."};
-const ms=i=>(i.createdAt&&i.createdAt.toMillis?i.createdAt.toMillis():Date.now());
-const isNew=i=>Date.now()-ms(i)<7*864e5;
-const fmt=t=>new Date(t).toLocaleDateString("fr-FR",{day:"numeric",month:"long"});
-const verb=k=>k==="Films"?"Télécharger":k==="Mangas"?"Lire":"Regarder";
-const grad=h=>"linear-gradient(160deg,hsl("+h+" 70% 45%),hsl("+(h+50)+" 70% 22%))";
+        function copyUrl(url) {
+            navigator.clipboard.writeText(url).then(() => alert("Stream URL copied to clipboard!"));
+        }
 
-function poster(i,ratio){const d=document.createElement("div");d.className="pst";d.style.background=grad(i.h||200);if(ratio)d.style.aspectRatio=ratio;
-const t=document.createElement("span");t.textContent=i.title;d.append(t);
-if(i.p){const im=document.createElement("img");im.src=i.p;im.alt="Affiche de "+i.title;im.loading="lazy";im.onerror=()=>im.remove();d.append(im)}
-if(isNew(i)){const n=document.createElement("span");n.className="new";n.textContent="Nouveau";d.append(n)}return d}
-function open(i){const dp=$("#dp");dp.textContent="";dp.append(poster(i,"16/11"));$("#dt").textContent=i.title;$("#dm").textContent=i.k+" – "+i.y;$("#dd").textContent=i.d||"";const a=$("#da");a.href=i.u;a.textContent=verb(i.k);cur=i;favBtn();addHist(i.id);media(i);$("#dlg").showModal()}
-$("#dcl").onclick=()=>$("#dlg").close();
-$("#dlg").onclick=e=>{if(e.target.id==="dlg")e.target.close()};
-
-function hero(){const i=items[0];if(!i){$("#hbg").style.background="";$("#ht").textContent="Des histoires à emporter.";$("#hd").textContent="Les premiers contenus arrivent bientôt.";$("#hb").hidden=true;return}
-$("#hbg").style.backgroundImage=(i.p?"url("+JSON.stringify(i.p)+"),":"")+grad(i.h||200);$("#hk").textContent=isNew(i)?"Nouveau":"À la une";$("#ht").textContent=i.title;$("#hd").textContent=i.d||(i.k+" – "+i.y);$("#hb").hidden=false;$("#hb").onclick=()=>open(i)}
-function render(){const q=$("#q").value.trim().toLowerCase(),R=$("#rows");R.textContent="";const L=items.filter(i=>!q||i.title.toLowerCase().includes(q));
-const S=q?[["Résultats",L]]:[["Nouveautés",L.filter(isNew)],["Films",L.filter(i=>i.k==="Films")],["Séries",L.filter(i=>i.k==="Séries")],["Animés",L.filter(i=>i.k==="Animés")],["Mangas",L.filter(i=>i.k==="Mangas")]];
-S.forEach(([n,a])=>{if(!a.length)return;const s=document.createElement("section");s.className="sec";const h=document.createElement("h2");h.textContent=n;const r=document.createElement("div");r.className="row";
-a.forEach(i=>{const b=document.createElement("button");b.className="pc";const t=document.createElement("div");t.className="pt";t.textContent=i.title;const m=document.createElement("div");m.className="meta";m.textContent=i.k+" – "+i.y;b.append(poster(i),t,m);b.onclick=()=>open(i);r.append(b)});s.append(h,r);R.append(s)});
-if(!R.children.length)R.innerHTML='<p class="empty">Aucun résultat pour le moment.</p>';hero()}
-$("#q").oninput=render;
-
-function notifs(){const L=$("#nlist");L.textContent="";const N=items.filter(isNew);let u=0;if(!N.length)L.innerHTML='<div class="empty" style="padding:14px">Aucune nouveauté pour le moment.</div>';
-N.forEach(i=>{const r=read.includes(i.id);if(!r)u++;const d=document.createElement("div");d.className="n "+(r?"read":"unread");const dot=document.createElement("span");dot.className="dot";const tx=document.createElement("div");tx.textContent="Nouveau : "+i.title+" est disponible. ("+fmt(ms(i))+")";d.append(dot,tx);L.append(d)});
-const b=$("#nb");b.textContent=u;b.hidden=!u;unread=u;renderMe()}
-async function enablePush(){try{if(!VAPID_KEY||!("Notification" in window)||!(await isSupported()))return;if(Notification.permission==="default")await Notification.requestPermission();if(Notification.permission!=="granted")return;
-const reg=await navigator.serviceWorker.register("firebase-messaging-sw.js");const t=await getToken(getMessaging(app),{vapidKey:VAPID_KEY,serviceWorkerRegistration:reg});if(t)await setDoc(doc(db,"tokens",t),{uid,createdAt:serverTimestamp()})}catch(e){}}
-
-$("#readall").onclick=()=>{read=items.map(i=>i.id);store.set("hv_read_"+uid,JSON.stringify(read));notifs()};
-function ping(t){if(prefs.alerts&&"Notification" in window&&Notification.permission==="granted"&&document.visibilityState==="visible")new Notification("Horizon VIBES",{body:"Nouveau : "+t})}
-
-function setMode(m){mode=m;const l=m==="login";$("#nameRow").hidden=l;$("#gtitle").textContent=l?"Content de te revoir.":"Crée ton compte pour entrer.";$("#go").textContent=l?"Me connecter":"Créer mon compte";$("#switch").textContent=l?"Pas encore de compte ? Inscris-toi":"Déjà un compte ? Connecte-toi";$("#err").textContent=""}
-$("#switch").onclick=()=>setMode(mode==="login"?"signup":"login");
-$("#form").onsubmit=async e=>{e.preventDefault();const prenom=$("#prenom").value.trim(),nom=$("#nom").value.trim(),email=$("#email").value.trim(),pw=$("#pw").value,er=$("#err");
-if(mode==="signup"&&(!prenom||!nom)){er.textContent="Entre ton prénom et ton nom.";return}
-if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){er.textContent="Cette adresse e-mail n’est pas valide. Exemple : nom@mail.com";return}
-if(pw.length<6){er.textContent="Le mot de passe doit avoir au moins 6 caractères.";return}
-try{if(mode==="signup"){const c=await createUserWithEmailAndPassword(auth,email,pw);await setDoc(doc(db,"users",c.user.uid),{prenom,nom,email,createdAt:serverTimestamp()});me.prenom=prenom;me.nom=nom;$("#hello").textContent="Bienvenue, "+prenom+".";fillName();renderMe()}else await signInWithEmailAndPassword(auth,email,pw)}catch(x){er.textContent=ERR[x.code]||"Une erreur est survenue. Réessaie."}};
-$("#logout").onclick=()=>signOut(auth);
-
-$("#aform").onsubmit=async e=>{e.preventDefault();const t=$("#at").value.trim(),y=$("#ay").value.trim(),u=$("#au").value.trim(),p=$("#ap").value.trim(),er=$("#aerr");
-if(!t||!/^\d{4}$/.test(y)||!/^https:\/\//.test(u)){er.textContent="Remplis le titre, une année à 4 chiffres et un lien qui commence par https://";return}
-if(p&&!/^(https:\/\/|[\w.\/-]+\.(jpe?g|png|webp)$)/i.test(p)){er.textContent="L’affiche doit être un lien https:// ou un nom de fichier (exemple : affiche.jpg)";return}
-if($("#av").value.trim()&&!/^https:\/\//.test($("#av").value.trim())){er.textContent="Le lien vidéo doit commencer par https://";return}
-try{await addDoc(collection(db,"catalogue"),{title:t,k:$("#ak").value,y:Number(y),d:$("#ad").value.trim(),p,u,v:$("#av").value.trim(),eps:parseEps($("#ae").value),h:Math.floor(Math.random()*360),createdAt:serverTimestamp()});e.target.reset();er.textContent=""}catch(x){er.textContent="Publication refusée. Vérifie que ton compte est administrateur."}};
-
-
-const SEED=[
-["MANGA Plus","Mangas",2026,"La plateforme officielle de l’éditeur Shueisha pour lire des mangas en ligne, avec des chapitres gratuits.","poster-manga-plus.jpg","https://mangaplus.shueisha.co.jp/"],
-["Crunchyroll","Animés",2026,"Le catalogue officiel d’animés en streaming légal, avec une partie des épisodes disponibles gratuitement.","poster-crunchyroll.jpg","https://www.crunchyroll.com/"],
-["Nosferatu","Films",1922,"Chef-d’œuvre du cinéma muet allemand de F. W. Murnau : un agent immobilier se rend chez le mystérieux comte Orlok. Film du domaine public.","nosferatu.jpg","https://archive.org/details/nosferatu"],
-["Le Voyage dans la Lune","Films",1902,"Le célèbre court métrage de Georges Méliès, considéré comme le premier film de science-fiction : des astronomes partent pour la Lune dans un obus. Domaine public.","voyage-lune.jpg","https://archive.org/details/le_voyage_dans_la_lune"],
-["Singularity","Films",2026,"Quand un événement cosmique engloutit la maison glacée d’une petite créature de l’espace, il doit trouver refuge parmi des créatures lumineuses veillées par un mystérieux être céleste.","https://studio.blender.org/files/public/thumbnail/b0/e4/b0e42f5463a4dba3adf6386d9dd0f048_m.webp","https://studio.blender.org/projects/singularity/"],
-["Wing It!","Films",2023,"Un ingénieur sérieux reçoit la visite d’un apprenti pilote enthousiaste, et les deux se retrouvent projetés dans les airs à bord d’une navette spatiale hors de contrôle.","https://studio.blender.org/files/public/thumbnail/c2/6d/c26d3b56aeb6bc9bf1ba6ee8e27b7ccd_m.webp","https://studio.blender.org/projects/wing-it/"],
-["Coffee Run","Films",2020,"Portée par la caféine, une jeune femme traverse les souvenirs doux-amers de sa relation passée.","https://studio.blender.org/files/public/thumbnail/7a/43/7a43fa6b0bc44e62f1cbb21473800e07_m.webp","https://studio.blender.org/projects/coffee-run/"],
-["Spring","Films",2019,"L’histoire d’une jeune bergère et de son chien, qui affrontent des esprits anciens pour que le cycle de la vie continue.","https://studio.blender.org/files/public/thumbnail/ea/65/ea65feaacf95911f39844e2ea97e68b5_m.webp","https://studio.blender.org/projects/spring/"],
-["Charge","Films",2022,"Dans un monde où l’énergie manque, un vieil homme démuni s’introduit dans une usine de batteries et affronte un robot de sécurité mortel.","https://studio.blender.org/files/public/thumbnail/ae/13/ae134adfbfa91160947451873ab09c6d_m.webp","https://studio.blender.org/projects/charge/"],
-["Cosmos Laundromat","Films",2015,"Premier épisode de Cosmos Laundromat, la plus grosse production du Blender Institute, pensée comme le début d’un long métrage.","https://studio.blender.org/files/public/thumbnail/75/54/7554352c0ec78a8540a8e5f3b3671927_m.webp","https://studio.blender.org/projects/cosmos-laundromat/"],
-["Sintel","Films",2010,"L’amitié entre une jeune fille et un bébé dragon, et ce qu’elle est prête à faire quand cette amitié lui est enlevée.","https://studio.blender.org/files/public/thumbnail/03/f7/03f7b0d15c55b428680d4c6bb313f742_m.webp","https://studio.blender.org/projects/sintel/"],
-["Big Buck Bunny","Films",2008,"Fatigué d’être harcelé par l’écureuil Frankie et sa bande, le lapin JC décide enfin de se défendre.","https://studio.blender.org/files/public/thumbnail/92/96/9296b1255fff3ef0e25da43f70616349_m.webp","https://studio.blender.org/projects/big-buck-bunny/"],
-["Tears of Steel","Films",2012,"Un court métrage mêlant prises de vues réelles et images de synthèse : deux personnes recréées du passé tentent d’arrêter l’apocalypse des robots.","https://studio.blender.org/files/public/thumbnail/3c/83/3c833d978e7de4b58eaa1a12be541664_m.webp","https://studio.blender.org/projects/tears-of-steel/"],
-["Elephants Dream","Films",2006,"Emo et Proog vivent dans un monde surréaliste d’oiseaux mécaniques et de machines vivantes. C’est le tout premier film ouvert de Blender.","https://studio.blender.org/files/public/thumbnail/04/77/0477dfea1d88a94ba1a75f99f433b8f6_m.webp","https://studio.blender.org/projects/elephants-dream/"]
-];
-$("#seed").onclick=async()=>{const b=$("#seed"),er=$("#serr");b.disabled=true;er.textContent="Import en cours…";let n=0;
-try{for(let i=SEED.length-1;i>=0;i--){const [title,k,y,d,p,u]=SEED[i];const ex=items.find(x=>x.title===title);if(ex){if(p&&ex.p!==p){await setDoc(doc(db,"catalogue",ex.id),{p},{merge:true});n++}continue}
-await addDoc(collection(db,"catalogue"),{title,k,y,d,p,u,h:Math.floor(Math.random()*360),createdAt:serverTimestamp()});n++}
-er.textContent=n?n+" contenu(s) ajouté(s) ou mis à jour. Crédits : Blender Foundation / Blender Studio, Internet Archive.":"Tous les films sont déjà dans le catalogue."}
-catch(x){er.textContent="Import refusé. Vérifie que ton compte est administrateur."}b.disabled=false};
-
-const save=f=>uid?setDoc(doc(db,"users",uid),f,{merge:true}).catch(()=>{}):Promise.resolve();
-function favBtn(){$("#dfav").textContent=favs.includes(cur.id)?"✓ Dans ma liste (retirer)":"+ Ajouter à ma liste"}
-$("#dfav").onclick=()=>{favs=favs.includes(cur.id)?favs.filter(x=>x!==cur.id):[cur.id,...favs];save({favs});favBtn();renderMe()};
-function addHist(id){hist=[id,...hist.filter(x=>x!==id)].slice(0,20);save({hist});renderMe()}
-const VIEWS=["home","list","msg","me"];
-function show(v){VIEWS.forEach(x=>{$("#v-"+x).hidden=x!==v;const b=document.querySelector('nav [data-v="'+x+'"]');if(x===v)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});if(v==="list"||v==="me")renderMe();window.scrollTo(0,0)}
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(b.dataset.v));
-$("#s1").onclick=()=>show("list");$("#s2").onclick=()=>show("msg");
-function card(i){const b=document.createElement("button");b.className="pc";const t=document.createElement("div");t.className="pt";t.textContent=i.title;const m=document.createElement("div");m.className="meta";m.textContent=i.k+" – "+i.y;b.append(poster(i),t,m);b.onclick=()=>open(i);return b}
-function renderMe(){const full=(me.prenom+" "+me.nom).trim()||"Utilisateur";$("#mav").textContent=full.charAt(0).toUpperCase();$("#mname").textContent=full;$("#mmail").textContent=me.email;$("#mid").textContent=uid?"ID : "+uid.slice(0,8):"";
-const byId=id=>items.find(x=>x.id===id),fl=favs.map(byId).filter(Boolean),hl=hist.map(byId).filter(Boolean);
-$("#c1").textContent=fl.length;$("#c2").textContent=unread;
-const g=$("#mylist");g.textContent="";fl.forEach(i=>g.append(card(i)));if(!fl.length)g.innerHTML='<p class="empty">Ta liste est vide. Ouvre un contenu et appuie sur « Ajouter à ma liste ».</p>';
-const r=$("#hrow");r.textContent="";hl.forEach(i=>r.append(card(i)));if(!hl.length)r.innerHTML='<p class="empty">Rien consulté pour le moment.</p>';renderDl()}
-$("#clearh").onclick=()=>{hist=[];save({hist});renderMe()};
-
-function applyTheme(t){const r=document.documentElement;if(t==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",t)}
-function applyPrefs(){applyTheme(prefs.theme);$("#sth").value=prefs.theme;$("#salert").checked=!!prefs.alerts;$("#spush").checked=!!prefs.push;store.set("hv_prefs",JSON.stringify(prefs))}
-function fillName(){$("#spn").value=me.prenom;$("#snm").value=me.nom}
-const setPref=(k,v)=>{prefs={...prefs,[k]:v};applyPrefs();save({prefs})};
-try{prefs={...prefs,...JSON.parse(store.get("hv_prefs")||"{}")}}catch(e){}
-$("#sth").onchange=e=>setPref("theme",e.target.value);
-$("#salert").onchange=e=>setPref("alerts",e.target.checked);
-$("#spush").onchange=async e=>{const on=e.target.checked,m=$("#spe");m.textContent="";
-if(on&&!VAPID_KEY){e.target.checked=false;m.textContent="Les notifications push seront disponibles bientôt. Les alertes dans l’application fonctionnent déjà.";return}
-if(on){await enablePush();if(!("Notification" in window)||Notification.permission!=="granted"){e.target.checked=false;m.textContent="Autorise les notifications dans les réglages de ton navigateur.";return}}
-setPref("push",e.target.checked)};
-$("#ssave").onclick=async()=>{const p=$("#spn").value.trim(),n=$("#snm").value.trim(),m=$("#sme");if(!p||!n){m.textContent="Entre ton prénom et ton nom.";return}
-me.prenom=p;me.nom=n;await save({prenom:p,nom:n});$("#hello").textContent="Bienvenue, "+p+".";renderMe();m.textContent="Nom enregistré."};
-$("#spw").onclick=async()=>{const m=$("#sme");try{await sendPasswordResetEmail(auth,me.email);m.textContent="E-mail envoyé à "+me.email+". Vérifie aussi tes spams."}catch(e){m.textContent="Envoi impossible. Réessaie plus tard."}};
-$("#sdel").onclick=async()=>{const m=$("#sme");if(!confirm("Supprimer définitivement ton compte et tes données ?"))return;
-try{await deleteDoc(doc(db,"users",uid));await deleteUser(auth.currentUser)}catch(e){await save({prenom:me.prenom,nom:me.nom,email:me.email,favs,hist,prefs});m.textContent=e.code==="auth/requires-recent-login"?"Pour ta sécurité, déconnecte-toi, reconnecte-toi puis réessaie.":"Suppression impossible. Réessaie."}};
-$("#fsend").onclick=async()=>{const t=$("#fm").value.trim(),e=$("#fe");if(t.length<5){e.textContent="Écris au moins quelques mots.";return}
-try{await addDoc(collection(db,"feedback"),{uid,email:me.email,type:$("#ft").value,msg:t,createdAt:serverTimestamp()});$("#fm").value="";e.textContent="Merci, ton message a été envoyé."}catch(x){e.textContent="Envoi impossible. Réessaie."}};
-
-function parseEps(t){return t.split("\n").map(l=>l.split("|").map(x=>x.trim())).filter(a=>a.length>=3&&/^https:\/\//.test(a[2])).map(a=>({n:a[0],t:a[1],v:a[2]}))}
-const dlKeys=()=>{try{return JSON.parse(store.get("hv_dl")||"[]")}catch(e){return[]}};
-const dlMeta=()=>{try{return JSON.parse(store.get("hv_dlm")||"{}")}catch(e){return{}}};
-const cpath=k=>"/dl/"+encodeURIComponent(k);
-async function play(key,url,title){let b=null;try{const r=await (await caches.open("hv-dl")).match(cpath(key));if(r)b=await r.blob()}catch(e){}
-const v=$("#pv");v.src=b?URL.createObjectURL(b):url;$("#pt").textContent=title+(b?" (hors ligne)":"");if($("#dlg").open)$("#dlg").close();$("#pdlg").showModal();v.play().catch(()=>{})}
-function stopPlayer(){const v=$("#pv");v.pause();v.removeAttribute("src");v.load()}
-$("#pcl").onclick=()=>$("#pdlg").close();
-$("#pdlg").addEventListener("close",stopPlayer);
-async function rmDl(key){try{await (await caches.open("hv-dl")).delete(cpath(key))}catch(e){}
-store.set("hv_dl",JSON.stringify(dlKeys().filter(x=>x!==key)));const m=dlMeta();delete m[key];store.set("hv_dlm",JSON.stringify(m))}
-const canDl=u=>/\.(mp4|webm|m4v|mov)(\?|#|$)/i.test(u||"");
-function dlErr(e){if(!navigator.onLine)return"Pas de connexion internet. Vérifie ton réseau et réessaie.";if(e&&e.name==="QuotaExceededError")return"Espace insuffisant sur ton téléphone. Libère de la place puis réessaie.";if(e===0)return"Le serveur de cette vidéo a refusé le téléchargement. Tu peux quand même la regarder avec ▶.";return"Ce site n’autorise pas l’enregistrement dans l’application. Tu peux quand même regarder la vidéo avec ▶."}
-function setDl(b,key,url,title,sh){const has=dlKeys().includes(key);b.disabled=false;b.hidden=!has&&!canDl(url);if(b.hidden)return;
-b.textContent=has?(sh?"✓":"✓ Téléchargé – retirer de l’appareil"):(sh?"⬇":"⬇ Télécharger dans l’application");
-b.onclick=async()=>{$("#dmsg").textContent="";if(dlKeys().includes(key)){await rmDl(key);setDl(b,key,url,title,sh);renderDl();return}
-b.disabled=true;b.textContent=sh?"0 %":"Téléchargement… 0 %";
-try{const r=await fetch(url,{mode:"cors"});if(!r.ok)throw 0;const total=+r.headers.get("content-length")||0,rd=r.body.getReader(),ch=[];let got=0;
-for(;;){const {done,value}=await rd.read();if(done)break;ch.push(value);got+=value.length;if(total){const p=Math.round(got*100/total);b.textContent=sh?p+" %":"Téléchargement… "+p+" %"}}
-const blob=new Blob(ch,{type:r.headers.get("content-type")||"video/mp4"});
-await (await caches.open("hv-dl")).put(cpath(key),new Response(blob));
-const k=dlKeys();k.push(key);store.set("hv_dl",JSON.stringify(k));const m=dlMeta();m[key]={t:title,u:url,s:blob.size};store.set("hv_dlm",JSON.stringify(m))}
-catch(e){$("#dmsg").textContent=dlErr(e)}
-setDl(b,key,url,title,sh);renderDl()}}
-function renderDl(){const L=$("#dllist");L.textContent="";const m=dlMeta(),ks=dlKeys();
-ks.forEach(k=>{const d=document.createElement("div");d.className="fb";d.style.cssText="display:flex;gap:10px;align-items:center";const t=document.createElement("span");t.style.flex="1";t.textContent=(m[k]?m[k].t:k)+(m[k]?" ("+Math.round(m[k].s/1048576)+" Mo)":"");
-const p=document.createElement("button");p.className="link";p.textContent="Lire";p.onclick=()=>play(k,m[k]&&m[k].u,m[k]?m[k].t:"");
-const x=document.createElement("button");x.className="link";x.textContent="Retirer";x.onclick=async()=>{await rmDl(k);renderDl()};d.append(t,p,x);L.append(d)});
-if(!ks.length)L.innerHTML='<p class="empty">Aucun téléchargement pour le moment.</p>'}
-function media(i){const w=$("#dwatch"),d=$("#ddl"),E=$("#eps"),eps=i.eps||[],has=!!i.v;E.textContent="";$("#dmsg").textContent="";w.hidden=!has;d.hidden=!has;
-if(has){w.onclick=()=>play("v:"+i.id,i.v,i.title);setDl(d,"v:"+i.id,i.v,i.title,false)}
-let last="";eps.forEach((x,n)=>{const m=/^S(\d+)/i.exec(x.n||"");if(m&&m[1]!==last){last=m[1];const h=document.createElement("div");h.className="meta";h.style.marginTop="10px";h.textContent="Saison "+m[1];E.append(h)}
-const key="e:"+i.id+":"+n,r=document.createElement("div");r.className="fb";r.style.cssText="display:flex;gap:10px;align-items:center";
-const t=document.createElement("span");t.style.flex="1";t.textContent=x.n+(x.t?" – "+x.t:"");
-const p=document.createElement("button");p.className="link";p.textContent="▶";p.setAttribute("aria-label","Regarder "+x.n);p.onclick=()=>play(key,x.v,i.title+" – "+x.n);
-const b=document.createElement("button");b.className="link";b.setAttribute("aria-label","Télécharger "+x.n);setDl(b,key,x.v,i.title+" – "+x.n,true);
-r.append(t,p,b);E.append(r)});
-$("#da").textContent=(has||eps.length)?"Page officielle":verb(i.k);
-$("#ddel").hidden=!isAdmin}
-$("#ddel").onclick=async()=>{if(!cur||!confirm("Supprimer « "+cur.title+" » du catalogue ?"))return;
-try{await deleteDoc(doc(db,"catalogue",cur.id));$("#dlg").close()}catch(e){alert("Suppression refusée. Vérifie que ton compte est administrateur.")}};
-applyPrefs();
-onAuthStateChanged(auth,async u=>{if(unsub){unsub();unsub=null}
-if(!u){uid=null;items=[];favs=[];hist=[];me={prenom:"",nom:"",email:""};if(unsubF){unsubF();unsubF=null}$("#gate").hidden=false;$("#admin").hidden=true;show("home");render();notifs();return}
-uid=u.uid;first=true;try{read=JSON.parse(store.get("hv_read_"+uid)||"[]")}catch(e){read=[]}
-$("#gate").hidden=true;$("#pw").value="";
-me.email=u.email||"";try{const p=await getDoc(doc(db,"users",uid));if(p.exists()){const x=p.data();me.prenom=x.prenom||"";me.nom=x.nom||"";favs=x.favs||[];hist=x.hist||[];prefs={...prefs,...(x.prefs||{})};$("#hello").textContent="Bienvenue, "+me.prenom+"."}}catch(e){}applyPrefs();fillName();show("home");
-try{isAdmin=(await getDoc(doc(db,"admins",uid))).exists();$("#admin").hidden=!isAdmin;if(isAdmin)unsubF=onSnapshot(query(collection(db,"feedback"),orderBy("createdAt","desc")),s=>{const L=$("#fblist");L.textContent="";s.docs.slice(0,30).forEach(d=>{const x=d.data(),e=document.createElement("div");e.className="fb";e.textContent=x.type+" – "+(x.email||"")+" : "+x.msg;L.append(e)});if(!L.children.length)L.textContent="Aucun message."})}catch(e){}
-unsub=onSnapshot(query(collection(db,"catalogue"),orderBy("createdAt","desc")),s=>{items=s.docs.map(d=>({id:d.id,...d.data()}));
-if(!first)s.docChanges().forEach(c=>{if(c.type==="added"&&!c.doc.metadata.hasPendingWrites)ping(c.doc.data().title)});first=false;render();notifs()},()=>{$("#rows").innerHTML='<p class="empty">Impossible de charger le catalogue. Vérifie ta connexion.</p>'})});
-if("serviceWorker" in navigator)navigator.serviceWorker.register("firebase-messaging-sw.js").catch(()=>{});
-render();setMode("signup");
-</script>
+        function switchSubtitle(url) {
+            const player = document.getElementById("player");
+            player.querySelectorAll("track").forEach(t => t.remove());
+            if (!url) return;
+            const t = document.createElement("track");
+            t.kind = "captions";
+            t.label = "Selected";
+            t.srclang = "en";
+            t.src = url;
+            t.default = true;
+            player.appendChild(t);
+        }
+    </script>
 </body>
 </html>
+"""
+    return HTMLResponse(content=html_content)
+
+@app.get("/search")
+def search(q: str = Query(..., min_length=1), page: int = 1, per_page: int = 20):
+    return {"query": q, "page": page, "results": engine.search(q, page=page, per_page=per_page)}
+
+@app.get("/search/suggest")
+def search_suggest(q: str = Query(..., min_length=1)):
+    url = f"{API_BASE}/subject/search-suggest"
+    headers = {"User-Agent": WEB_USER_AGENT, "Referer": "https://moviebox.ph/"}
+    try:
+        resp = engine.session.post(url, headers=headers, json={"keyword": q, "perPage": 10}, timeout=15)
+        raw = resp.json().get("data", {}).get("items", [])
+    except Exception:
+        raw = []
+    suggestions = []
+    for item in raw:
+        sub = item.get("subject") or {}
+        suggestions.append({
+            "title": sub.get("title") or item.get("word") or item.get("title"),
+            "slug": sub.get("detailPath") or item.get("detailPath"),
+            "subject_id": str(sub.get("subjectId") or item.get("subjectId"))
+        })
+    return {"suggestions": suggestions}
+
+@app.get("/detail/{subject_id}")
+def get_detail(subject_id: str):
+    return engine.get_details(subject_id)
+
+@app.get("/episodes/{subject_id}")
+def get_episodes(subject_id: str):
+    return {"subject_id": subject_id, "seasons": engine.get_episodes(subject_id)}
+
+@app.get("/api/stream/{subject_id}")
+def get_streams(subject_id: str, se: int = 0, ep: int = 0, detail_path: Optional[str] = None):
+    streams = engine.get_streams(subject_id, season=se, episode=ep, detail_path=detail_path)
+    return {
+        "subject_id": subject_id,
+        "season": se,
+        "episode": ep,
+        "count": len(streams),
+        "streams": streams
+    }
+
+@app.get("/api/stream/{subject_id}/captions")
+def get_captions(subject_id: str, se: int = 0, ep: int = 0, stream_id: Optional[str] = None):
+    subs = engine.get_subtitles(subject_id, stream_id=stream_id, season=se, episode=ep)
+    return {
+        "subject_id": subject_id,
+        "season": se,
+        "episode": ep,
+        "count": len(subs),
+        "captions": subs
+    }
+
+@app.get("/movies")
+def get_movies(page: int = 1, per_page: int = 24, sort: str = "RECOMMEND"):
+    url = f"{API_BASE}/subject/filter"
+    payload = {"tabId": 2, "filter": {"sort": sort, "genre": "ALL", "country": "ALL", "year": "ALL", "language": "ALL"}, "page": page, "perPage": per_page}
+    resp = engine.session.post(url, headers={"User-Agent": WEB_USER_AGENT, "Referer": "https://moviebox.ph/"}, json=payload, timeout=20)
+    data = resp.json().get("data", {})
+    raw = data.get("items") or data.get("subjects") or []
+    return {
+        "page": page,
+        "per_page": per_page,
+        "total": data.get("pager", {}).get("totalCount") or len(raw),
+        "items": [
+            {
+                "title": s.get("title"),
+                "subject_id": str(s.get("subjectId")),
+                "detail_path": s.get("detailPath"),
+                "cover": s.get("cover", {}).get("url") if isinstance(s.get("cover"), dict) else None,
+                "rating": s.get("imdbRatingValue"),
+                "year": s.get("releaseDate", "")[:4] if s.get("releaseDate") else None
+            }
+            for s in raw
+        ]
+    }
+
+@app.get("/tv-series")
+def get_tv_series(page: int = 1, per_page: int = 24, sort: str = "RECOMMEND"):
+    url = f"{API_BASE}/subject/filter"
+    payload = {"tabId": 5, "filter": {"sort": sort, "genre": "ALL", "country": "ALL", "year": "ALL", "language": "ALL"}, "page": page, "perPage": per_page}
+    resp = engine.session.post(url, headers={"User-Agent": WEB_USER_AGENT, "Referer": "https://moviebox.ph/"}, json=payload, timeout=20)
+    data = resp.json().get("data", {})
+    raw = data.get("items") or data.get("subjects") or []
+    return {
+        "page": page,
+        "per_page": per_page,
+        "total": data.get("pager", {}).get("totalCount") or len(raw),
+        "items": [
+            {
+                "title": s.get("title"),
+                "subject_id": str(s.get("subjectId")),
+                "detail_path": s.get("detailPath"),
+                "cover": s.get("cover", {}).get("url") if isinstance(s.get("cover"), dict) else None,
+                "rating": s.get("imdbRatingValue"),
+                "year": s.get("releaseDate", "")[:4] if s.get("releaseDate") else None
+            }
+            for s in raw
+        ]
+    }
+
+@app.get("/home")
+def get_home():
+    url = f"{API_BASE}/home?host=moviebox.ph"
+    resp = engine.session.get(url, headers={"User-Agent": WEB_USER_AGENT, "Referer": "https://moviebox.ph/"}, timeout=20)
+    return resp.json()
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)
