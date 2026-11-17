@@ -196,7 +196,20 @@ input[type=checkbox]{width:auto;accent-color:var(--accent)}
 
 <dialog id="pdlg"><button class="cl" id="pcl" aria-label="Fermer le lecteur">✕</button><video id="pv" controls playsinline style="width:100%;display:block;background:#000;max-height:60vh"></video><div class="dx"><h2 id="pt" style="font-size:1.1rem"></h2></div></dialog>
 
-<dialog id="dlg"><button class="cl" id="dcl" aria-label="Fermer">✕</button><div id="dp"></div><div class="dx"><h2 id="dt"></h2><div class="meta" id="dm"></div><p id="dd"></p><div id="eps"></div><p class="err" id="dmsg" role="alert"></p><button class="act" id="dwatch" type="button" hidden>▶ Regarder dans l’application</button><button class="act" id="ddl" type="button" hidden style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><button class="act" id="dfav" type="button" style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><a class="act" id="da" target="_blank" rel="noopener noreferrer"></a><button class="act" id="ddel" type="button" hidden style="width:100%;background:none;border:1px solid var(--accent);color:var(--accent)">Supprimer ce contenu</button></div></dialog>
+<dialog id="edlg"><button class="cl" id="ecl" aria-label="Fermer">✕</button><div class="dx">
+<h2>Modifier le contenu</h2>
+<label for="et">Titre</label><input id="et">
+<label for="ek">Catégorie</label><select id="ek"><option>Films</option><option>Séries</option><option>Animés</option><option>Mangas</option></select>
+<label for="ey">Année</label><input id="ey" inputmode="numeric">
+<label for="ed">Résumé</label><textarea id="ed" rows="4"></textarea>
+<label for="ev">Lien vidéo du film (mp4, https)</label><input id="ev" type="url" placeholder="https://">
+<label for="ee">Épisodes : une ligne par épisode</label><textarea id="ee" rows="5" placeholder="S1E1 | Titre | https://lien.mp4"></textarea>
+<label for="ep">Affiche (https://… ou nom de fichier)</label><input id="ep">
+<label for="eu">Lien officiel</label><input id="eu" type="url" placeholder="https://">
+<p class="err" id="eerr" role="alert"></p>
+<button class="go" id="esave" type="button">Enregistrer les modifications</button>
+</div></dialog>
+<dialog id="dlg"><button class="cl" id="dcl" aria-label="Fermer">✕</button><div id="dp"></div><div class="dx"><h2 id="dt"></h2><div class="meta" id="dm"></div><p id="dd"></p><div id="eps"></div><p class="err" id="dmsg" role="alert"></p><button class="act" id="dwatch" type="button" hidden>▶ Regarder dans l’application</button><button class="act" id="ddl" type="button" hidden style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><button class="act" id="dfav" type="button" style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><a class="act" id="da" target="_blank" rel="noopener noreferrer"></a><button class="act" id="dedit" type="button" hidden style="width:100%;border:1px solid var(--line);background:none;color:var(--text)">Modifier ce contenu</button><button class="act" id="ddel" type="button" hidden style="width:100%;background:none;border:1px solid var(--accent);color:var(--accent)">Supprimer ce contenu</button></div></dialog>
 
 <section class="gate" id="gate" hidden>
   <div class="box">
@@ -338,6 +351,16 @@ try{await deleteDoc(doc(db,"users",uid));await deleteUser(auth.currentUser)}catc
 $("#fsend").onclick=async()=>{const t=$("#fm").value.trim(),e=$("#fe");if(t.length<5){e.textContent="Écris au moins quelques mots.";return}
 try{await addDoc(collection(db,"feedback"),{uid,email:me.email,type:$("#ft").value,msg:t,createdAt:serverTimestamp()});$("#fm").value="";e.textContent="Merci, ton message a été envoyé."}catch(x){e.textContent="Envoi impossible. Réessaie."}};
 
+
+const epsTxt=a=>(a||[]).map(x=>x.n+" | "+x.t+" | "+x.v).join("\n");
+$("#dedit").onclick=()=>{if(!cur)return;$("#et").value=cur.title||"";$("#ek").value=cur.k||"Films";$("#ey").value=cur.y||"";$("#ed").value=cur.d||"";$("#ev").value=cur.v||"";$("#ee").value=epsTxt(cur.eps);$("#ep").value=cur.p||"";$("#eu").value=cur.u||"";$("#eerr").textContent="";$("#edlg").showModal()};
+$("#ecl").onclick=()=>$("#edlg").close();
+$("#esave").onclick=async()=>{const t=$("#et").value.trim(),y=$("#ey").value.trim(),u=$("#eu").value.trim(),p=$("#ep").value.trim(),v=$("#ev").value.trim(),raw=$("#ee").value.trim(),eps=parseEps(raw),er=$("#eerr");
+if(!t||!/^\d{4}$/.test(y)||!/^https:\/\//.test(u)){er.textContent="Remplis le titre, une année à 4 chiffres et un lien officiel qui commence par https://";return}
+if(p&&!/^(https:\/\/|[\w.\/-]+\.(jpe?g|png|webp)$)/i.test(p)){er.textContent="L’affiche doit être un lien https:// ou un nom de fichier (exemple : affiche.jpg)";return}
+if(v&&!/^https:\/\//.test(v)){er.textContent="Le lien vidéo doit commencer par https://";return}
+if(raw&&eps.length!==raw.split("\n").filter(l=>l.trim()).length){er.textContent="Épisodes : chaque ligne doit être de la forme S1E1 | Titre | https://lien";return}
+try{await setDoc(doc(db,"catalogue",cur.id),{title:t,k:$("#ek").value,y:Number(y),d:$("#ed").value.trim(),p,u,v,eps},{merge:true});$("#edlg").close();$("#dlg").close()}catch(e){er.textContent="Modification refusée. Vérifie que ton compte est administrateur."}};
 function parseEps(t){return t.split("\n").map(l=>l.split("|").map(x=>x.trim())).filter(a=>a.length>=3&&/^https:\/\//.test(a[2])).map(a=>({n:a[0],t:a[1],v:a[2]}))}
 const dlKeys=()=>{try{return JSON.parse(store.get("hv_dl")||"[]")}catch(e){return[]}};
 const dlMeta=()=>{try{return JSON.parse(store.get("hv_dlm")||"{}")}catch(e){return{}}};
@@ -376,7 +399,7 @@ const p=document.createElement("button");p.className="link";p.textContent="▶";
 const b=document.createElement("button");b.className="link";b.setAttribute("aria-label","Télécharger "+x.n);setDl(b,key,x.v,i.title+" – "+x.n,true);
 r.append(t,p,b);E.append(r)});
 $("#da").textContent=(has||eps.length)?"Page officielle":verb(i.k);
-$("#ddel").hidden=!isAdmin}
+$("#ddel").hidden=!isAdmin;$("#dedit").hidden=!isAdmin}
 $("#ddel").onclick=async()=>{if(!cur||!confirm("Supprimer « "+cur.title+" » du catalogue ?"))return;
 try{await deleteDoc(doc(db,"catalogue",cur.id));$("#dlg").close()}catch(e){alert("Suppression refusée. Vérifie que ton compte est administrateur.")}};
 applyPrefs();
