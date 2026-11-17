@@ -1,1 +1,1 @@
- web: uvicorn main:app --host 0.0.0.0 --port $PORT
+ {"hosting":{"public":".","ignore":["firebase.json","**/.*","**/node_modules/**","functions/**","README.md","firestore.rules"]},"functions":{"source":"functions"},"firestore":{"rules":"firestore.rules"}}
