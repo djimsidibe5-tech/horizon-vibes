@@ -60,11 +60,11 @@ label{display:block;font-weight:500;margin:14px 0 4px}
 input,select,textarea{width:100%;font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
 .err{color:var(--accent);min-height:1.4em;margin:8px 0 0;font-size:.9rem}
 .go{width:100%;margin-top:12px;border:0;border-radius:10px;padding:14px;background:var(--accent);color:var(--accent-ink);font-weight:700}
-dialog{border:0;border-radius:18px;padding:0;width:min(440px,92vw);background:var(--surface);color:var(--text);overflow:hidden}
+dialog{border:0;border-radius:18px;padding:0;width:min(440px,92vw);background:var(--surface);color:var(--text);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;max-height:88vh;max-height:88dvh}
 dialog::backdrop{background:rgba(10,8,30,.75)}
 .dx{padding:16px}.dx h2{font-size:1.6rem;font-weight:800}
 .act{display:block;text-align:center;text-decoration:none;background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:12px;font-weight:700;margin-top:14px}
-.cl{position:absolute;top:10px;right:10px;z-index:3;border:0;border-radius:50%;width:36px;height:36px;background:rgba(20,18,43,.7);color:#fff}
+.cl{position:sticky;top:8px;display:block;margin:8px 8px -44px auto;z-index:5;border:0;border-radius:50%;width:36px;height:36px;background:rgba(20,18,43,.7);color:#fff}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 [hidden]{display:none!important}
@@ -95,6 +95,11 @@ nav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stro
 .sw{display:flex;gap:10px;align-items:center;font-weight:400;margin:14px 0 0}
 input[type=checkbox]{width:auto;accent-color:var(--accent)}
 .fb{padding:10px 0;border-bottom:1px solid var(--line);font-size:.9rem}
+#dd{white-space:pre-line;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
+#dd.open{display:block}
+.admbar{display:flex;gap:8px;margin:10px 0}
+.admbar .act{flex:1;margin:0;padding:9px;font-size:.9rem;background:none;color:var(--text);border:1px solid var(--line)}
+.admbar #ddel{color:var(--accent);border-color:var(--accent)}
 </style>
 </head>
 <body>
@@ -209,7 +214,8 @@ input[type=checkbox]{width:auto;accent-color:var(--accent)}
 <p class="err" id="eerr" role="alert"></p>
 <button class="go" id="esave" type="button">Enregistrer les modifications</button>
 </div></dialog>
-<dialog id="dlg"><button class="cl" id="dcl" aria-label="Fermer">✕</button><div id="dp"></div><div class="dx"><h2 id="dt"></h2><div class="meta" id="dm"></div><p id="dd"></p><div id="eps"></div><p class="err" id="dmsg" role="alert"></p><button class="act" id="dwatch" type="button" hidden>▶ Regarder dans l’application</button><button class="act" id="ddl" type="button" hidden style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><button class="act" id="dfav" type="button" style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><a class="act" id="da" target="_blank" rel="noopener noreferrer"></a><button class="act" id="dedit" type="button" hidden style="width:100%;border:1px solid var(--line);background:none;color:var(--text)">Modifier ce contenu</button><button class="act" id="ddel" type="button" hidden style="width:100%;background:none;border:1px solid var(--accent);color:var(--accent)">Supprimer ce contenu</button></div></dialog>
+<dialog id="dlg"><button class="cl" id="dcl" aria-label="Fermer">✕</button><div id="dp"></div><div class="dx"><h2 id="dt"></h2><div class="meta" id="dm"></div><div class="admbar"><button class="act" id="dedit" type="button" hidden>✎ Modifier</button><button class="act" id="ddel" type="button" hidden>Supprimer</button></div>
+<p id="dd"></p><button class="link" id="dmore" type="button" hidden>Lire la suite</button><div id="eps"></div><p class="err" id="dmsg" role="alert"></p><button class="act" id="dwatch" type="button" hidden>▶ Regarder dans l’application</button><button class="act" id="ddl" type="button" hidden style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><button class="act" id="dfav" type="button" style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><a class="act" id="da" target="_blank" rel="noopener noreferrer"></a></div></dialog>
 
 <section class="gate" id="gate" hidden>
   <div class="box">
@@ -256,8 +262,9 @@ function poster(i,ratio){const d=document.createElement("div");d.className="pst"
 const t=document.createElement("span");t.textContent=i.title;d.append(t);
 if(i.p){const im=document.createElement("img");im.src=i.p;im.alt="Affiche de "+i.title;im.loading="lazy";im.decoding="async";im.onerror=()=>im.remove();d.append(im)}
 if(isNew(i)){const n=document.createElement("span");n.className="new";n.textContent="Nouveau";d.append(n)}return d}
-function open(i){const dp=$("#dp");dp.textContent="";dp.append(poster(i,"16/11"));$("#dt").textContent=i.title;$("#dm").textContent=i.k+" – "+i.y;$("#dd").textContent=i.d||"";const a=$("#da");a.href=i.u;a.textContent=verb(i.k);cur=i;favBtn();addHist(i.id);media(i);$("#dlg").showModal()}
+function open(i){const dp=$("#dp");dp.textContent="";dp.append(poster(i,"16/11"));$("#dt").textContent=i.title;$("#dm").textContent=i.k+" – "+i.y;$("#dd").textContent=i.d||"";$("#dd").classList.remove("open");$("#dmore").hidden=(i.d||"").length<200;$("#dmore").textContent="Lire la suite";const a=$("#da");a.href=i.u;a.textContent=verb(i.k);cur=i;favBtn();addHist(i.id);media(i);$("#dlg").showModal();$("#dlg").scrollTop=0}
 $("#dcl").onclick=()=>$("#dlg").close();
+$("#dmore").onclick=()=>{const o=$("#dd").classList.toggle("open");$("#dmore").textContent=o?"Réduire":"Lire la suite"};
 $("#dlg").onclick=e=>{if(e.target.id==="dlg")e.target.close()};
 
 function hero(){const i=items[0];if(!i){$("#hbg").style.background="";$("#ht").textContent="Des histoires à emporter.";$("#hd").textContent="Les premiers contenus arrivent bientôt.";$("#hb").hidden=true;return}
