@@ -1,0 +1,23 @@
+const {onDocumentCreated} = require("firebase-functions/v2/firestore");
+const admin = require("firebase-admin");
+admin.initializeApp();
+
+// Envoie une notification push à tous les appareils inscrits à chaque nouveau contenu.
+exports.notifyNewItem = onDocumentCreated("catalogue/{id}", async (event) => {
+  const d = event.data.data();
+  const db = admin.firestore();
+  const tokens = (await db.collection("tokens").get()).docs.map((x) => x.id);
+  for (let i = 0; i < tokens.length; i += 500) {
+    const chunk = tokens.slice(i, i + 500);
+    const res = await admin.messaging().sendEachForMulticast({
+      tokens: chunk,
+      notification: {title: "Horizon VIBES", body: "Nouveau : " + d.title, ...(d.p && d.p.startsWith("https://") ? {imageUrl: d.p} : {})},
+      webpush: {fcmOptions: {link: "/"}},
+    });
+    const bad = [];
+    res.responses.forEach((r, j) => {
+      if (!r.success && /not-registered|invalid-registration/.test(r.error.code)) bad.push(chunk[j]);
+    });
+    await Promise.all(bad.map((t) => db.collection("tokens").doc(t).delete()));
+  }
+});
