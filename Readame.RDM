@@ -1,0 +1,42 @@
+# Horizon VIBES
+
+Application web installable (PWA) : catalogue de films, séries, animés et mangas, comptes utilisateurs, ma liste, historique, messages de nouveautés, lecteur d'épisodes et téléchargement dans l'application.
+
+## Fichiers
+| Fichier | Rôle | Où le mettre |
+|---|---|---|
+| `index.html` | Toute l'application | GitHub (racine du dépôt) |
+| `firebase-messaging-sw.js` | Chargement rapide, mode hors connexion, notifications push | GitHub |
+| `manifest.json`, `icon-192.png`, `icon-512.png`, `icon-512-maskable.png` | Installation sur l'écran d'accueil | GitHub |
+| `nosferatu.jpg`, `voyage-lune.jpg`, `poster-crunchyroll.jpg`, `poster-manga-plus.jpg` | Affiches originales | GitHub |
+| `firestore.rules` | Règles de sécurité | Console Firebase > Firestore > Règles > Publier |
+| `firebase.json`, `functions/` | Notifications push application fermée (optionnel) | Ordinateur, avec Firebase CLI |
+
+## Mise à jour du site (téléphone)
+1. Sur GitHub, ouvre le dépôt `horizon-vibes`, puis **Add file > Upload files**.
+2. Envoie les fichiers modifiés (les noms doivent rester identiques, par exemple `index.html` et non `index-2.html`), puis **Valider les modifications**.
+3. Attends une minute, puis ferme et rouvre l'application.
+
+## Ajouter du contenu (administrateur)
+**Moi > Administration > Ajouter une nouveauté.** Remplis le titre, la catégorie (Films, Séries, Animés, Mangas), l'année, le résumé, le lien de l'affiche (`https://...` ou un fichier du dépôt comme `nosferatu.jpg`) et le lien officiel.
+- **Film avec vidéo** : colle un lien direct en `https://` qui se termine par `.mp4`.
+- **Série** : dans « Épisodes », une ligne par épisode : `S1E1 | Titre | https://lien-direct.mp4`
+- **Supprimer** : ouvre le contenu et appuie sur **Supprimer ce contenu**.
+- **Import en un clic** : le bouton **Importer le catalogue** ajoute les contenus de démonstration (films Blender et domaine public) et met à jour leurs affiches.
+
+Le bouton ⬇ n'apparaît que pour les liens `.mp4`, `.webm`, `.m4v` ou `.mov`, et le téléchargement dans l'application ne marche que si le serveur de la vidéo l'autorise.
+
+## Règle importante
+N'ajoute que des contenus dont tu as les droits : licences libres (Creative Commons), domaine public, accord écrit d'un studio ou d'un éditeur. Les films, séries, animés et mangas commerciaux sans autorisation exposent ton application à un retrait et toi à des poursuites. Pour répondre à une demande de retrait, utilise **Supprimer ce contenu**.
+
+## Optimisations incluses
+- Service worker : pages en « réseau d'abord » (toujours la dernière version), icônes et affiches en cache, mode hors connexion.
+- Préchargement des modules Firebase et préconnexion aux polices.
+- Images chargées à la demande et décodées en arrière-plan ; affiches et icônes compressées.
+- Requêtes Firestore limitées (300 contenus, 30 messages) pour garder l'application rapide.
+- CSS inutilisé retiré.
+
+## Notifications push application fermée (optionnel)
+1. Firebase > Paramètres du projet > Cloud Messaging > Certificats Web Push : génère une clé et colle-la dans `VAPID_KEY` (dans `index.html`).
+2. Passe le projet Firebase au forfait Blaze (paiement à l'usage, quota gratuit).
+3. Sur un ordinateur : `npm i -g firebase-tools`, `firebase login`, `cd functions && npm install && cd ..`, puis `firebase deploy --only functions`.
