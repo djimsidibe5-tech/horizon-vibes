@@ -192,7 +192,7 @@ input[type=checkbox]{width:auto;accent-color:var(--accent)}
 
 <dialog id="pdlg"><button class="cl" id="pcl" aria-label="Fermer le lecteur">✕</button><video id="pv" controls playsinline style="width:100%;display:block;background:#000;max-height:60vh"></video><div class="dx"><h2 id="pt" style="font-size:1.1rem"></h2></div></dialog>
 
-<dialog id="dlg"><button class="cl" id="dcl" aria-label="Fermer">✕</button><div id="dp"></div><div class="dx"><h2 id="dt"></h2><div class="meta" id="dm"></div><p id="dd"></p><div id="eps"></div><button class="act" id="dwatch" type="button" hidden>▶ Regarder dans l’application</button><button class="act" id="ddl" type="button" hidden style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><button class="act" id="dfav" type="button" style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><a class="act" id="da" target="_blank" rel="noopener noreferrer"></a><button class="act" id="ddel" type="button" hidden style="width:100%;background:none;border:1px solid var(--accent);color:var(--accent)">Supprimer ce contenu</button></div></dialog>
+<dialog id="dlg"><button class="cl" id="dcl" aria-label="Fermer">✕</button><div id="dp"></div><div class="dx"><h2 id="dt"></h2><div class="meta" id="dm"></div><p id="dd"></p><div id="eps"></div><p class="err" id="dmsg" role="alert"></p><button class="act" id="dwatch" type="button" hidden>▶ Regarder dans l’application</button><button class="act" id="ddl" type="button" hidden style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><button class="act" id="dfav" type="button" style="width:100%;border:1px solid var(--line);background:none;color:var(--text)"></button><a class="act" id="da" target="_blank" rel="noopener noreferrer"></a><button class="act" id="ddel" type="button" hidden style="width:100%;background:none;border:1px solid var(--accent);color:var(--accent)">Supprimer ce contenu</button></div></dialog>
 
 <section class="gate" id="gate" hidden>
   <div class="box">
@@ -345,23 +345,25 @@ $("#pcl").onclick=()=>$("#pdlg").close();
 $("#pdlg").addEventListener("close",stopPlayer);
 async function rmDl(key){try{await (await caches.open("hv-dl")).delete(cpath(key))}catch(e){}
 store.set("hv_dl",JSON.stringify(dlKeys().filter(x=>x!==key)));const m=dlMeta();delete m[key];store.set("hv_dlm",JSON.stringify(m))}
-function setDl(b,key,url,title,sh){const has=dlKeys().includes(key);b.disabled=false;
+const canDl=u=>/\.(mp4|webm|m4v|mov)(\?|#|$)/i.test(u||"");
+function dlErr(e){if(!navigator.onLine)return"Pas de connexion internet. Vérifie ton réseau et réessaie.";if(e&&e.name==="QuotaExceededError")return"Espace insuffisant sur ton téléphone. Libère de la place puis réessaie.";if(e===0)return"Le serveur de cette vidéo a refusé le téléchargement. Tu peux quand même la regarder avec ▶.";return"Ce site n’autorise pas l’enregistrement dans l’application. Tu peux quand même regarder la vidéo avec ▶."}
+function setDl(b,key,url,title,sh){const has=dlKeys().includes(key);b.disabled=false;b.hidden=!has&&!canDl(url);if(b.hidden)return;
 b.textContent=has?(sh?"✓":"✓ Téléchargé – retirer de l’appareil"):(sh?"⬇":"⬇ Télécharger dans l’application");
-b.onclick=async()=>{if(dlKeys().includes(key)){await rmDl(key);setDl(b,key,url,title,sh);renderDl();return}
+b.onclick=async()=>{$("#dmsg").textContent="";if(dlKeys().includes(key)){await rmDl(key);setDl(b,key,url,title,sh);renderDl();return}
 b.disabled=true;b.textContent=sh?"0 %":"Téléchargement… 0 %";
 try{const r=await fetch(url,{mode:"cors"});if(!r.ok)throw 0;const total=+r.headers.get("content-length")||0,rd=r.body.getReader(),ch=[];let got=0;
 for(;;){const {done,value}=await rd.read();if(done)break;ch.push(value);got+=value.length;if(total){const p=Math.round(got*100/total);b.textContent=sh?p+" %":"Téléchargement… "+p+" %"}}
 const blob=new Blob(ch,{type:r.headers.get("content-type")||"video/mp4"});
 await (await caches.open("hv-dl")).put(cpath(key),new Response(blob));
 const k=dlKeys();k.push(key);store.set("hv_dl",JSON.stringify(k));const m=dlMeta();m[key]={t:title,u:url,s:blob.size};store.set("hv_dlm",JSON.stringify(m))}
-catch(e){alert("Téléchargement impossible : ce lien n’autorise pas l’enregistrement dans l’application, ou la connexion a échoué.")}
+catch(e){$("#dmsg").textContent=dlErr(e)}
 setDl(b,key,url,title,sh);renderDl()}}
 function renderDl(){const L=$("#dllist");L.textContent="";const m=dlMeta(),ks=dlKeys();
 ks.forEach(k=>{const d=document.createElement("div");d.className="fb";d.style.cssText="display:flex;gap:10px;align-items:center";const t=document.createElement("span");t.style.flex="1";t.textContent=(m[k]?m[k].t:k)+(m[k]?" ("+Math.round(m[k].s/1048576)+" Mo)":"");
 const p=document.createElement("button");p.className="link";p.textContent="Lire";p.onclick=()=>play(k,m[k]&&m[k].u,m[k]?m[k].t:"");
 const x=document.createElement("button");x.className="link";x.textContent="Retirer";x.onclick=async()=>{await rmDl(k);renderDl()};d.append(t,p,x);L.append(d)});
 if(!ks.length)L.innerHTML='<p class="empty">Aucun téléchargement pour le moment.</p>'}
-function media(i){const w=$("#dwatch"),d=$("#ddl"),E=$("#eps"),eps=i.eps||[],has=!!i.v;E.textContent="";w.hidden=!has;d.hidden=!has;
+function media(i){const w=$("#dwatch"),d=$("#ddl"),E=$("#eps"),eps=i.eps||[],has=!!i.v;E.textContent="";$("#dmsg").textContent="";w.hidden=!has;d.hidden=!has;
 if(has){w.onclick=()=>play("v:"+i.id,i.v,i.title);setDl(d,"v:"+i.id,i.v,i.title,false)}
 let last="";eps.forEach((x,n)=>{const m=/^S(\d+)/i.exec(x.n||"");if(m&&m[1]!==last){last=m[1];const h=document.createElement("div");h.className="meta";h.style.marginTop="10px";h.textContent="Saison "+m[1];E.append(h)}
 const key="e:"+i.id+":"+n,r=document.createElement("div");r.className="fb";r.style.cssText="display:flex;gap:10px;align-items:center";
